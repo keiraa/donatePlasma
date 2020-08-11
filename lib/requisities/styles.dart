@@ -14,7 +14,6 @@ final kTextFieldDecor = InputDecoration(
 final kMainTitle = TextStyle(
     fontSize: 40,
     color: Colors.white,
-    fontFamily: 'DancingScript',
     fontWeight: FontWeight.w700,
 );
 

@@ -1,16 +1,67 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:plasmabank/pages/Register.dart';
 import 'package:plasmabank/requisities/styles.dart';
 
 class OTPPage extends StatefulWidget {
+  OTPPage({@required this.phone});
+  final String phone;
   @override
   _OTPPageState createState() => _OTPPageState();
 }
 
 class _OTPPageState extends State<OTPPage> {
   TextEditingController controller;
-  String otp;
+  String otp,a;
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
+
+  Future<bool> loginUser(BuildContext context) async {
+    _auth.verifyPhoneNumber(
+        phoneNumber: "+91" + widget.phone.trim(),
+        timeout: Duration(seconds: 60),
+        verificationCompleted: (AuthCredential credential) async {
+          //Navigator.of(context).pop();
+
+
+
+          FirebaseUser user = await _auth.currentUser();
+          try{
+            AuthResult result = await _auth.signInWithCredential(credential);
+          }catch( e)
+          {
+            print (e);
+          }
+
+          //  await result.user.linkWithCredential(credential1);
+          if (user != null) {
+            Navigator.pop(context);
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => (RegisterPage())));
+          } else {
+            print("Error");
+          }
+
+          //This callback would gets called when verification is done auto maticlly
+        },
+        verificationFailed: (AuthException exception) {
+          print(exception.message);
+        },
+        codeSent: (String verificationId, [int forceResendingToken]) {
+          a = verificationId;
+        },
+        codeAutoRetrievalTimeout: null);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loginUser(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +97,7 @@ class _OTPPageState extends State<OTPPage> {
               ),
               SizedBox(height: MediaQuery.of(context).size.height*0.04,),
               Container(
-                height: MediaQuery.of(context).size.height*0.3,
+                height: MediaQuery.of(context).size.height*0.34,
                 decoration: BoxDecoration(
                   color: Color(0xf0ef9a9a),
                   borderRadius: BorderRadius.vertical(top:Radius.circular(10)),
@@ -94,11 +145,34 @@ class _OTPPageState extends State<OTPPage> {
                         },
                       ),
                     ),
-                    Card(
-                      color: Colors.white,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 9,vertical: 5),
-                        child: Text('Verify',style: kToggleNotSelected.copyWith(fontSize: 26),),
+                    GestureDetector(
+                      onTap: () async{
+                        //code is otp
+                        final code1 = otp.trim();
+                        AuthCredential credential = PhoneAuthProvider.getCredential(
+                            verificationId: a, smsCode: code1);
+
+                        AuthResult result =
+                            await _auth.signInWithCredential(credential);
+
+                        FirebaseUser user = result.user;
+
+                        if (user != null) {
+                          Navigator.pop(context);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RegisterPage()));
+                        } else {
+                          print("Error");
+                        }
+                      },
+                      child: Card(
+                        color: Colors.white,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 9,vertical: 5),
+                          child: Text('Verify',style: kToggleNotSelected.copyWith(fontSize: 26),),
+                        ),
                       ),
                     )
                   ],
