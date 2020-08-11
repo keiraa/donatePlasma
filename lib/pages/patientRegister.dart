@@ -1,10 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:plasmabank/requisities/styles.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:toast/toast.dart';
 
 class PatientRegister extends StatefulWidget {
   @override
@@ -12,14 +9,14 @@ class PatientRegister extends StatefulWidget {
 }
 
 class _PatientRegisterState extends State<PatientRegister> {
-  FirebaseAuth _auth=FirebaseAuth.instance;
   List<bool> toggleGender = [true,false,false];
   int selectedGender = 0;
+  bool isNumber = true,isPincode=true;
   List<String> bloodGroups = ['A+','B+','AB+','O+','A-','B-','AB-','O-'];
   List<String> relations = ['Parents','Grand Parents','Husband','Wife','Son','Daughter','Sibiling','Relative','Friend','Aquaintance','Stranger'];
   DateFormat formatter = DateFormat.yMd();
   DateTime now = DateTime.now();
-  FirebaseUser user;
+
 
   //Form Variables
   String selectedBloodGroup = 'A+';
@@ -27,12 +24,7 @@ class _PatientRegisterState extends State<PatientRegister> {
   List<String> genders = ['M','F','O'];
   DateTime testDate = DateTime.now();
   bool isBP=false,isDiabetic=false,isPreCondition = false;
-  String name,age,hospital,city,state,pinCode,preMedical,moreDetails,contact;
-
-
-  void getUser() async{
-    user = await _auth.currentUser();
-  }
+  String name,age,hospital,contact,city,state,pinCode,preMedical,moreDetails;
 
   Future<void> _selectDate(BuildContext context) async{
     final DateTime picked = await showDatePicker(
@@ -58,14 +50,6 @@ class _PatientRegisterState extends State<PatientRegister> {
       }
     }
   }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getUser();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -101,7 +85,7 @@ class _PatientRegisterState extends State<PatientRegister> {
         Container(
             margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Row(
                   children: <Widget>[
@@ -109,26 +93,23 @@ class _PatientRegisterState extends State<PatientRegister> {
                       'Age',
                       style: kLabelStyle,
                     ),
-                    SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+                    SizedBox(width: 15,),
                     Container(
-                      width: MediaQuery.of(context).size.width*0.15,
+                      width: 60,
                       child: TextField(
-                        keyboardType: TextInputType.number,
                         onChanged: (value){
                           age = value;
                         },
                         textAlign: TextAlign.center,
-                        maxLength: 2,
                         decoration: kTextFieldDecor.copyWith(
-                          hintText: '15',
-                          counterText: '',
+                            hintText: '15'
                         ),
                       ),
                     )
                   ],
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width*0.04,
+                  width: MediaQuery.of(context).size.width*0.05,
                 ),
                 Row(
                   children: <Widget>[
@@ -136,21 +117,20 @@ class _PatientRegisterState extends State<PatientRegister> {
                       'Blood Group',
                       style: kLabelStyle,
                     ),
-                    SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+                    SizedBox(width: 15,),
                     Container(
-                      height: MediaQuery.of(context).size.height*0.06,
+                      height: 50,
                       padding: EdgeInsets.symmetric(horizontal: 7,vertical: 5),
-                      width: MediaQuery.of(context).size.width*0.19,
+                      width: 75,
                       decoration: BoxDecoration(
                         color: Color(0xffef9a9a),
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),
                       child: DropdownButton(
-                        isExpanded: false,
                         dropdownColor: Color(0xffef9a9a),
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                         icon: Icon(
@@ -392,13 +372,26 @@ class _PatientRegisterState extends State<PatientRegister> {
                   maxLength: 10,
                   onChanged: (value){
                     contact = value;
-                    int length = value.length;
+                    if(value.length==10)
+                      {
+                        setState(() {
+                          isNumber = true;
+                        });
+                      }
+                    if(value.length<10)
+                      {
+                        setState(() {
+                          isNumber = false;
+                          print('hello');
+                        });
+                      }
                   },
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.phone,
                   decoration: kTextFieldDecor.copyWith(
-                      hintText: '+91-XXXXXXXX',
+                    hintText: 'XXXXXXXX',
                     counterText: '',
+                    errorText: isNumber?null:'Please enter a 10 Digit Number'
                   ),
                 ),
               )
@@ -474,15 +467,27 @@ class _PatientRegisterState extends State<PatientRegister> {
               SizedBox(width: 15,),
               Flexible(
                 child: TextField(
-                  maxLength: 6,
                   onChanged: (value){
                     pinCode = value.trim();
+                    if(value.length == 6)
+                      {
+                        setState(() {
+                          isPincode = true;
+                        });
+                      }
+                    else{
+                      setState(() {
+                        isPincode = false;
+                      });
+                    }
                   },
                   textAlign: TextAlign.center,
+                  maxLength: 6,
                   keyboardType: TextInputType.phone,
                   decoration: kTextFieldDecor.copyWith(
-                      hintText: 'Ex: 530017',
+                    hintText: 'Ex: 530017',
                     counterText: '',
+                    errorText: isPincode?null:'Please enter a valid Pincode'
                   ),
                 ),
               )
@@ -621,73 +626,15 @@ class _PatientRegisterState extends State<PatientRegister> {
         ),
         SizedBox(height: MediaQuery.of(context).size.height*0.03,),
         Center(
-
-          child: GestureDetector(
-            onTap: (){
-              setState(() {
-                print(name);
-                print(age);
-                print(hospital);
-                print(contact);
-                print(city);
-                print(state);
-                print(pinCode);
-                print(preMedical);
-                print(moreDetails);
-                print(selectedBloodGroup);
-                print(selectedRelation);
-                print(now);
-                print(selectedGender);
-                print(testDate);
-                print(isBP);
-                print(isDiabetic);
-                print(isPreCondition);
-                if(selectedBloodGroup==null||selectedRelation==null||selectedGender==null||name==null|| age==null|| hospital==null|| contact==null|| city==null||state==null||pinCode==null)
-                  {
-                    Toast.show("Enter all the fields", context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM,backgroundColor: Color(0xffef9a9a) );
-                  }
-
-                else {
-                  try {
-                    var uid = user.uid;
-                    Firestore.instance.collection("patient").add({
-                      'name': name,
-                      'age': age,
-                      'bloodgroup':selectedBloodGroup,
-                      'gender':genders[selectedGender],
-                      'testdate':testDate,
-                      'relation':selectedRelation,
-                      'hospital': hospital,
-                      'contact': contact,
-                      'city': city,
-                      'state': state,
-                      'pincode': pinCode,
-                      'bp': isBP,
-                      'isDiabetic': isDiabetic,
-                      'precondition': isPreCondition?preMedical:'',
-                      'moreDetails': moreDetails,
-                      'uid': uid,
-                      'created': now,
-                    }).then((value) => null);
-                  }catch(e)
-                {
-                  print(e);
-                  Toast.show("yay", context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM,backgroundColor: Color(0xffef9a9a));
-                }
-                }
-              });
-            } ,
-            child: Card(
-
-              elevation: 15,
-              color: Color(0xf0ff5252),
-              child: Padding(
-                padding: EdgeInsets.all(13),
-                child: Text(
-                  'Add Patient',
-                  style: kGenderSelected.copyWith(
-                      fontSize: 20
-                  ),
+          child: Card(
+            elevation: 15,
+            color: Color(0xf0ff5252),
+            child: Padding(
+              padding: EdgeInsets.all(13),
+              child: Text(
+                'Add Patient',
+                style: kGenderSelected.copyWith(
+                    fontSize: 20
                 ),
               ),
             ),

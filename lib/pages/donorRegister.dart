@@ -611,7 +611,6 @@ class _DonorRegisterState extends State<DonorRegister> {
               setState(() {
                 if(selectedBloodGroup==null||selectedTreatment==null||name==null|| age==null|| selectedGender==null||  city==null||state==null||pincode==null)
                 {
-
                 }
                 else {
                   try {
