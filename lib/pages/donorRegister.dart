@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -100,7 +101,7 @@ class _DonorRegisterState extends State<DonorRegister> {
         Container(
             margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Row(
                   children: <Widget>[
@@ -108,23 +109,26 @@ class _DonorRegisterState extends State<DonorRegister> {
                       'Age',
                       style: kLabelStyle,
                     ),
-                    SizedBox(width: 15,),
+                    SizedBox(width: MediaQuery.of(context).size.width*0.01,),
                     Container(
-                      width: 60,
+                      width: MediaQuery.of(context).size.width*0.15,
                       child: TextField(
-                        textAlign: TextAlign.center,
-                        decoration: kTextFieldDecor.copyWith(
-                            hintText: '15'
-                        ),
+                        keyboardType: TextInputType.number,
                         onChanged: (value){
                           age = value;
                         },
+                        textAlign: TextAlign.center,
+                        maxLength: 2,
+                        decoration: kTextFieldDecor.copyWith(
+                          hintText: '15',
+                          counterText: '',
+                        ),
                       ),
                     )
                   ],
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width*0.05,
+                  width: MediaQuery.of(context).size.width*0.04,
                 ),
                 Row(
                   children: <Widget>[
@@ -132,20 +136,21 @@ class _DonorRegisterState extends State<DonorRegister> {
                       'Blood Group',
                       style: kLabelStyle,
                     ),
-                    SizedBox(width: 15,),
+                    SizedBox(width: MediaQuery.of(context).size.width*0.01,),
                     Container(
-                      height: 50,
+                      height: MediaQuery.of(context).size.height*0.06,
                       padding: EdgeInsets.symmetric(horizontal: 7,vertical: 5),
-                      width: 75,
+                      width: MediaQuery.of(context).size.width*0.19,
                       decoration: BoxDecoration(
                         color: Color(0xffef9a9a),
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),
                       child: DropdownButton(
+                        isExpanded: false,
                         dropdownColor: Color(0xffef9a9a),
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                         icon: Icon(
@@ -601,15 +606,40 @@ class _DonorRegisterState extends State<DonorRegister> {
         ),
         SizedBox(height: MediaQuery.of(context).size.height*0.03,),
         Center(
-          child: Card(
-            elevation: 15,
-            color: Color(0xf0ff5252),
-            child: Padding(
-              padding: EdgeInsets.all(13),
-              child: Text(
-                'Add Donor',
-                style: kGenderSelected.copyWith(
-                  fontSize: 20
+          child: GestureDetector(
+            onTap: (){
+              setState(() {
+                if(selectedBloodGroup==null||selectedTreatment==null||name==null|| age==null|| selectedGender==null||  city==null||state==null||pincode==null)
+                {
+
+                }
+                else {
+                  try {
+                    Firestore.instance.collection("patient").add({
+                      'name': name,
+                      'age': age,
+                      'city': city,
+                      'state': state,
+                      'pincode': pincode,
+                      'preMedical': preMedical
+                    }).then((value) => null);
+                  }catch(e)
+                  {
+                    print(e);
+                  }
+                }
+              });
+            },
+            child: Card(
+              elevation: 15,
+              color: Color(0xf0ff5252),
+              child: Padding(
+                padding: EdgeInsets.all(13),
+                child: Text(
+                  'Add Donor',
+                  style: kGenderSelected.copyWith(
+                    fontSize: 20
+                  ),
                 ),
               ),
             ),
