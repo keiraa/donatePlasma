@@ -17,6 +17,7 @@ class _PatientRegisterState extends State<PatientRegister> {
   bool isBP=false,isDiabetic=false,isCovid=false,isPreCondition = false;
   DateFormat formatter = DateFormat.yMd();
   DateTime now = DateTime.now(),testDate = DateTime.now();
+  TextEditingController name=TextEditingController();
 
 
   Future<void> _selectDate(BuildContext context) async{
