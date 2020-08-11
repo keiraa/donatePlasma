@@ -14,8 +14,20 @@ final kTextFieldDecor = InputDecoration(
 final kMainTitle = TextStyle(
     fontSize: 40,
     color: Colors.white,
+    fontFamily: 'DancingScript',
     fontWeight: FontWeight.w700,
-    fontFamily: 'DancingScript'
+);
+
+final kMainLoginTitle = TextStyle(
+  color: Color(0xf0ff5252),
+  fontSize: 45,
+  fontWeight: FontWeight.w700,
+);
+
+final kTagTitle = TextStyle(
+    fontSize: 18,
+    color: Colors.white,
+    fontWeight: FontWeight.w700,
 );
 
 final kToggleSelected = TextStyle(
@@ -61,6 +73,6 @@ final kDateStyle = TextStyle(
 final kSearchFieldDecor = InputDecoration(
   alignLabelWithHint: true,
   hintText: 'Search Here',
-  hintStyle: TextStyle(color: Colors.white),
+  hintStyle: TextStyle(color: Colors.white70),
   border: InputBorder.none,
 );

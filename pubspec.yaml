@@ -50,6 +50,12 @@ flutter:
     - family: DancingScript
       fonts:
         - asset: fonts/DancingScript.ttf
+    - family: MetalMania
+      fonts:
+        - asset: fonts/MetalMania.ttf
+    - family: PermanentMarker
+      fonts:
+        - asset: fonts/PermanentMarker.ttf
   assets:
     - images/
   # To add assets to your application, add an assets section, like this:
