@@ -11,16 +11,24 @@ class DonorRegister extends StatefulWidget {
 
 class _DonorRegisterState extends State<DonorRegister> {
   List<bool> toggleGender = [true,false,false];
-  String selectedBloodGroup = 'A+';
-  String selectedTreatment = 'Home Quarantined';
+  int selectedGender = 0;
   List<String> treatments = ['Home Quarantined','Hospitalized'];
   List<String> bloodGroups = ['A+','B+','AB+','O+','A-','B-','AB-','O-'];
-  bool isBP=false,isDiabetic=false,isCovid=false,isPreCondition= false;
   DateFormat formatter = DateFormat.yMd();
   DateTime now = DateTime.now();
+  List<DateTime> dates;
+
+
+  //Form Variables
+  String selectedBloodGroup = 'A+';
+  String selectedTreatment = 'Home Quarantined';
+  List<String> genders = ['M','F','O'];
+  bool isBP=false,isDiabetic=false,isCovid=false,isPreCondition= false;
   DateTime testDate = DateTime.now();
   DateTime recoverDate = DateTime.now();
-  List<DateTime> dates;
+
+  String name,age,city,state,pincode,preMedical;
+
 
 
   @override
@@ -53,547 +61,564 @@ class _DonorRegisterState extends State<DonorRegister> {
       if(i==k)
       {
         toggleGender[i]=true;
+        selectedGender = i;
       }
     }
   }
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          SizedBox(height: 30,),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width*0.19,
-                  child: Text(
-                    'Name',
-                    style: kLabelStyle,
-                  ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        SizedBox(height: 30,),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width*0.19,
+                child: Text(
+                  'Name',
+                  style: kLabelStyle,
                 ),
-                SizedBox(width: 15,),
-                Flexible(
-                  child: TextField(
-                    textAlign: TextAlign.center,
-                    decoration: kTextFieldDecor.copyWith(
-                        hintText: 'Name of the Donor'
-                    ),
+              ),
+              SizedBox(width: 15,),
+              Flexible(
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  decoration: kTextFieldDecor.copyWith(
+                      hintText: 'Name of the Donor'
                   ),
-                )
-              ],
-            ),
-          ),
-          Container(
-              margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        'Age',
-                        style: kLabelStyle,
-                      ),
-                      SizedBox(width: 15,),
-                      Container(
-                        width: 60,
-                        child: TextField(
-                          textAlign: TextAlign.center,
-                          decoration: kTextFieldDecor.copyWith(
-                              hintText: '15'
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width*0.05,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        'Blood Group',
-                        style: kLabelStyle,
-                      ),
-                      SizedBox(width: 15,),
-                      Container(
-                        height: 50,
-                        padding: EdgeInsets.symmetric(horizontal: 7,vertical: 5),
-                        width: 75,
-                        decoration: BoxDecoration(
-                          color: Color(0xffef9a9a),
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: DropdownButton(
-                          dropdownColor: Color(0xffef9a9a),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          icon: Icon(
-                            Icons.keyboard_arrow_down,
-                            size: 20,
-                            color: Colors.white,
-                          ),
-                          underline: SizedBox(),
-                          value: selectedBloodGroup,
-                          items: bloodGroups.map<DropdownMenuItem<String>>((String value){
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String value){
-                            setState(() {
-                              selectedBloodGroup = value;
-                            });
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ],
+                  onChanged: (value){
+                    name = value;
+                  },
+                ),
               )
+            ],
           ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 15,horizontal: MediaQuery.of(context).size.width*0.05),
+        ),
+        Container(
+            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  'Gender',
-                  style: kLabelStyle,
+                Row(
+                  children: <Widget>[
+                    Text(
+                      'Age',
+                      style: kLabelStyle,
+                    ),
+                    SizedBox(width: 15,),
+                    Container(
+                      width: 60,
+                      child: TextField(
+                        textAlign: TextAlign.center,
+                        decoration: kTextFieldDecor.copyWith(
+                            hintText: '15'
+                        ),
+                        onChanged: (value){
+                          age = value;
+                        },
+                      ),
+                    )
+                  ],
                 ),
                 SizedBox(
-                  width: 30,
+                  width: MediaQuery.of(context).size.width*0.05,
                 ),
                 Row(
                   children: <Widget>[
-                    GestureDetector(
-                      onTap: (){
-                        setState(() {
-                          toggleFunctionGender(0);
-                        });
-                      },
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        child: Card(
-                          color: toggleGender[0]?Color(0xffef9a9a):Colors.white,
-                          margin: EdgeInsets.zero,
-                          child: Padding(
-                            padding: EdgeInsets.all(5),
-                            child: Center(
-                              child: Text('M',style: toggleGender[0]?kGenderSelected:kGenderNotSelected,),
-                            ),
-                          ),
-                        ),
-                      ),
+                    Text(
+                      'Blood Group',
+                      style: kLabelStyle,
                     ),
-                    GestureDetector(
-                      onTap: (){
-                        setState(() {
-                          toggleFunctionGender(1);
-                        });
-                      },
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        child: Card(
-                          color: toggleGender[1]?Color(0xffef9a9a):Colors.white,
-                          margin: EdgeInsets.zero,
-                          child: Padding(
-                            padding: EdgeInsets.all(5),
-                            child: Center(
-                              child: Text('F',style: toggleGender[1]?kGenderSelected:kGenderNotSelected,),
-                            ),
-                          ),
-                        ),
+                    SizedBox(width: 15,),
+                    Container(
+                      height: 50,
+                      padding: EdgeInsets.symmetric(horizontal: 7,vertical: 5),
+                      width: 75,
+                      decoration: BoxDecoration(
+                        color: Color(0xffef9a9a),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: (){
-                        setState(() {
-                          toggleFunctionGender(2);
-                        });
-                      },
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        child: Card(
-                          color: toggleGender[2]?Color(0xffef9a9a):Colors.white,
-                          margin: EdgeInsets.zero,
-                          child: Padding(
-                            padding: EdgeInsets.all(5),
-                            child: Center(
-                              child: Text('O',style: TextStyle(fontWeight: FontWeight.w700,color: toggleGender[2]?Colors.white:Color(0xffef9a9a),fontSize: 30),),
-                            ),
-                          ),
+                      child: DropdownButton(
+                        dropdownColor: Color(0xffef9a9a),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
+                        icon: Icon(
+                          Icons.keyboard_arrow_down,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                        underline: SizedBox(),
+                        value: selectedBloodGroup,
+                        items: bloodGroups.map<DropdownMenuItem<String>>((String value){
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String value){
+                          setState(() {
+                            selectedBloodGroup = value;
+                          });
+                        },
                       ),
-                    ),
+                    )
                   ],
                 ),
               ],
-            ),
-          ),
-
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width*0.19,
-                  child: Text(
-                    'City',
-                    style: kLabelStyle,
-                  ),
-                ),
-                SizedBox(width: 15,),
-                Flexible(
-                  child: TextField(
-                    textAlign: TextAlign.center,
-                    decoration: kTextFieldDecor.copyWith(
-                        hintText: 'Ex: Visakhapatnam'
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width*0.19,
-                  child: Text(
-                    'State',
-                    style: kLabelStyle,
-                  ),
-                ),
-                SizedBox(width: 15,),
-                Flexible(
-                  child: TextField(
-                    textAlign: TextAlign.center,
-                    decoration: kTextFieldDecor.copyWith(
-                        hintText: 'Ex: Andhra Pradesh'
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width*0.19,
-                  child: Text(
-                    'Pincode',
-                    style: kLabelStyle,
-                  ),
-                ),
-                SizedBox(width: 15,),
-                Flexible(
-                  child: TextField(
-                    textAlign: TextAlign.center,
-                    keyboardType: TextInputType.phone,
-                    decoration: kTextFieldDecor.copyWith(
-                        hintText: 'Ex: 530017'
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-
-          SizedBox(
-            height: MediaQuery.of(context).size.height*0.06,
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 10),
-            child: Text(
-              'Please share your Medical Status',
-              style: kInfoText,
-            ),
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height*0.025,
-          ),
-          Container(
-              margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05),
-              padding: EdgeInsets.only(right: MediaQuery.of(context).size.width*0.1),
-              child:Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text('Blood Pressure',style: kLabelStyle,),
-                  Container(
-                    child: Switch(
-                      value: isBP,
-                      inactiveThumbColor: Colors.white,
-                      activeColor: Color(0xffef9a9a),
-                      onChanged: (value){
-                        setState(() {
-                          isBP = value;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              )
-          ),
-          Container(
-              margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05),
-              padding: EdgeInsets.only(right: MediaQuery.of(context).size.width*0.1),
-              child:Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text('Diabetes',style: kLabelStyle,),
-                  Container(
-                    child: Switch(
-                      value: isDiabetic,
-                      inactiveThumbColor: Colors.white,
-                      activeColor: Color(0xffef9a9a),
-                      onChanged: (value){
-                        setState(() {
-                          isDiabetic = value;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              )
-          ),
-          Container(
-              margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05),
-              padding: EdgeInsets.only(right: MediaQuery.of(context).size.width*0.1),
-              child:Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Flexible(child: Text('Have any other pre-conditions',style: kLabelStyle,)),
-                  Container(
-                    child: Switch(
-                      value: isPreCondition,
-                      inactiveThumbColor: Colors.white,
-                      activeColor: Color(0xffef9a9a),
-                      onChanged: (value){
-                        setState(() {
-                          isPreCondition = value;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              )
-          ),
-          Visibility(
-            visible: isPreCondition,
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    'Conditions',
-                    style: kLabelStyle,
-                  ),
-                  SizedBox(width: 15,),
-                  Flexible(
-                    child: TextField(
-                      textAlign: TextAlign.center,
-                      decoration: kTextFieldDecor.copyWith(
-                          hintText: 'Ex: Mental Illness'
-                      ),
-                    ),
-                  )
-                ],
+            )
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 15,horizontal: MediaQuery.of(context).size.width*0.05),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Gender',
+                style: kLabelStyle,
               ),
-            ),
-          ),
-          Container(
-              margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05),
-              padding: EdgeInsets.only(right: MediaQuery.of(context).size.width*0.1),
-              child:Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Flexible(child: Text('Are you a COVID Patient',style: kLabelStyle,)),
-                  Container(
-                    child: Switch(
-                      value: isCovid,
-                      inactiveThumbColor: Colors.white,
-                      activeColor: Color(0xffef9a9a),
-                      onChanged: (value){
-                        setState(() {
-                          isCovid = value;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              )
-          ),
-          Visibility(
-            visible: isCovid,
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                    child: Text('Last Tested',style: kLabelStyle,),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: Color(0xffef9a9a),
-                          borderRadius: BorderRadius.horizontal(left: Radius.circular(10)),
-                        ),
-                        child: Text(formatter.format(dates[0]),style: kDateStyle,),
-                      ),
-                      InkWell(
-                        onTap: ()=> _selectDate(0, context),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: Color(0xffffcdd2),
-                            borderRadius: BorderRadius.horizontal(right: Radius.circular(10)),
-                          ),
-                          child: Icon(
-                            FontAwesomeIcons.calendarAlt,
-                            color: Colors.black,
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                ],
+              SizedBox(
+                width: 30,
               ),
-            ),
-          ),
-          Visibility(
-            visible: isCovid,
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Row(
                 children: <Widget>[
-                  Flexible(
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        toggleFunctionGender(0);
+                      });
+                    },
                     child: Container(
-                      child: Text('Recovered Date',style: kLabelStyle,),
-                    ),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: Color(0xffef9a9a),
-                          borderRadius: BorderRadius.horizontal(left: Radius.circular(10)),
-                        ),
-                        child: Text(formatter.format(dates[1]),style: kDateStyle,),
-                      ),
-                      InkWell(
-                        onTap: () => _selectDate(1, context),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: Color(0xffffcdd2),
-                            borderRadius: BorderRadius.horizontal(right: Radius.circular(10)),
-                          ),
-                          child: Icon(
-                            FontAwesomeIcons.calendarAlt,
-                            color: Colors.black,
+                      height: 50,
+                      width: 50,
+                      child: Card(
+                        color: toggleGender[0]?Color(0xffef9a9a):Colors.white,
+                        margin: EdgeInsets.zero,
+                        child: Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Center(
+                            child: Text('M',style: toggleGender[0]?kGenderSelected:kGenderNotSelected,),
                           ),
                         ),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
-          Visibility(
-            visible: isCovid,
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'Treatment',
-                    style: kLabelStyle,
+                      ),
+                    ),
                   ),
-                  SizedBox(width: 15,),
-                  Container(
-                    width: 200,
-                    height: 50,
-                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: Color(0xffef9a9a),
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: DropdownButton(
-                      isExpanded: true,
-                      dropdownColor: Color(0xffef9a9a),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        toggleFunctionGender(1);
+                      });
+                    },
+                    child: Container(
+                      height: 50,
+                      width: 50,
+                      child: Card(
+                        color: toggleGender[1]?Color(0xffef9a9a):Colors.white,
+                        margin: EdgeInsets.zero,
+                        child: Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Center(
+                            child: Text('F',style: toggleGender[1]?kGenderSelected:kGenderNotSelected,),
+                          ),
+                        ),
                       ),
-                      icon: Icon(
-                        Icons.keyboard_arrow_down,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                      underline: SizedBox(),
-                      value: selectedTreatment,
-                      items: treatments.map<DropdownMenuItem<String>>((String value){
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (String value){
-                        setState(() {
-                          selectedTreatment = value;
-                        });
-                      },
                     ),
-                  )
+                  ),
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        toggleFunctionGender(2);
+                      });
+                    },
+                    child: Container(
+                      height: 50,
+                      width: 50,
+                      child: Card(
+                        color: toggleGender[2]?Color(0xffef9a9a):Colors.white,
+                        margin: EdgeInsets.zero,
+                        child: Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Center(
+                            child: Text('O',style: TextStyle(fontWeight: FontWeight.w700,color: toggleGender[2]?Colors.white:Color(0xffef9a9a),fontSize: 30),),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
-            ),
+            ],
           ),
-          SizedBox(height: MediaQuery.of(context).size.height*0.03,),
-          Center(
-            child: Card(
-              elevation: 15,
-              color: Color(0xf0ff5252),
-              child: Padding(
-                padding: EdgeInsets.all(13),
+        ),
+
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width*0.19,
                 child: Text(
-                  'Add Donor',
-                  style: kGenderSelected.copyWith(
-                    fontSize: 20
+                  'City',
+                  style: kLabelStyle,
+                ),
+              ),
+              SizedBox(width: 15,),
+              Flexible(
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  onChanged: (value){
+                    city = value;
+                  },
+                  decoration: kTextFieldDecor.copyWith(
+                      hintText: 'Ex: Visakhapatnam'
                   ),
+                ),
+              )
+            ],
+          ),
+        ),
+
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width*0.19,
+                child: Text(
+                  'State',
+                  style: kLabelStyle,
+                ),
+              ),
+              SizedBox(width: 15,),
+              Flexible(
+                child: TextField(
+                  onChanged: (value){
+                    state = value;
+                  },
+                  textAlign: TextAlign.center,
+                  decoration: kTextFieldDecor.copyWith(
+                      hintText: 'Ex: Andhra Pradesh'
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width*0.19,
+                child: Text(
+                  'Pincode',
+                  style: kLabelStyle,
+                ),
+              ),
+              SizedBox(width: 15,),
+              Flexible(
+                child: TextField(
+                  onChanged: (value){
+                    pincode = value.trim();
+                  },
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.phone,
+                  decoration: kTextFieldDecor.copyWith(
+                      hintText: 'Ex: 530017'
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+
+        SizedBox(
+          height: MediaQuery.of(context).size.height*0.06,
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+            'Please share your Medical Status',
+            style: kInfoText,
+          ),
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height*0.025,
+        ),
+        Container(
+            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05),
+            padding: EdgeInsets.only(right: MediaQuery.of(context).size.width*0.1),
+            child:Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('Blood Pressure',style: kLabelStyle,),
+                Container(
+                  child: Switch(
+                    value: isBP,
+                    inactiveThumbColor: Colors.white,
+                    activeColor: Color(0xffef9a9a),
+                    onChanged: (value){
+                      setState(() {
+                        isBP = value;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            )
+        ),
+        Container(
+            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05),
+            padding: EdgeInsets.only(right: MediaQuery.of(context).size.width*0.1),
+            child:Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('Diabetes',style: kLabelStyle,),
+                Container(
+                  child: Switch(
+                    value: isDiabetic,
+                    inactiveThumbColor: Colors.white,
+                    activeColor: Color(0xffef9a9a),
+                    onChanged: (value){
+                      setState(() {
+                        isDiabetic = value;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            )
+        ),
+        Container(
+            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05),
+            padding: EdgeInsets.only(right: MediaQuery.of(context).size.width*0.1),
+            child:Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Flexible(child: Text('Have any other pre-conditions',style: kLabelStyle,)),
+                Container(
+                  child: Switch(
+                    value: isPreCondition,
+                    inactiveThumbColor: Colors.white,
+                    activeColor: Color(0xffef9a9a),
+                    onChanged: (value){
+                      setState(() {
+                        isPreCondition = value;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            )
+        ),
+        Visibility(
+          visible: isPreCondition,
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
+            child: Row(
+              children: <Widget>[
+                Text(
+                  'Conditions',
+                  style: kLabelStyle,
+                ),
+                SizedBox(width: 15,),
+                Flexible(
+                  child: TextField(
+                    onChanged: (value){
+                      preMedical = value;
+                    },
+                    textAlign: TextAlign.center,
+                    decoration: kTextFieldDecor.copyWith(
+                        hintText: 'Ex: Mental Illness'
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+        Container(
+            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05),
+            padding: EdgeInsets.only(right: MediaQuery.of(context).size.width*0.1),
+            child:Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Flexible(child: Text('Are you a COVID Patient',style: kLabelStyle,)),
+                Container(
+                  child: Switch(
+                    value: isCovid,
+                    inactiveThumbColor: Colors.white,
+                    activeColor: Color(0xffef9a9a),
+                    onChanged: (value){
+                      setState(() {
+                        isCovid = value;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            )
+        ),
+        Visibility(
+          visible: isCovid,
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Container(
+                  child: Text('Last Tested',style: kLabelStyle,),
+                ),
+                Row(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: Color(0xffef9a9a),
+                        borderRadius: BorderRadius.horizontal(left: Radius.circular(10)),
+                      ),
+                      child: Text(formatter.format(dates[0]),style: kDateStyle,),
+                    ),
+                    InkWell(
+                      onTap: ()=> _selectDate(0, context),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Color(0xffffcdd2),
+                          borderRadius: BorderRadius.horizontal(right: Radius.circular(10)),
+                        ),
+                        child: Icon(
+                          FontAwesomeIcons.calendarAlt,
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+        Visibility(
+          visible: isCovid,
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Flexible(
+                  child: Container(
+                    child: Text('Recovered Date',style: kLabelStyle,),
+                  ),
+                ),
+                Row(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: Color(0xffef9a9a),
+                        borderRadius: BorderRadius.horizontal(left: Radius.circular(10)),
+                      ),
+                      child: Text(formatter.format(dates[1]),style: kDateStyle,),
+                    ),
+                    InkWell(
+                      onTap: () => _selectDate(1, context),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Color(0xffffcdd2),
+                          borderRadius: BorderRadius.horizontal(right: Radius.circular(10)),
+                        ),
+                        child: Icon(
+                          FontAwesomeIcons.calendarAlt,
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+        Visibility(
+          visible: isCovid,
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  'Treatment',
+                  style: kLabelStyle,
+                ),
+                SizedBox(width: 15,),
+                Container(
+                  width: 200,
+                  height: 50,
+                  padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: Color(0xffef9a9a),
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  child: DropdownButton(
+                    isExpanded: true,
+                    dropdownColor: Color(0xffef9a9a),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    icon: Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 20,
+                      color: Colors.white,
+                    ),
+                    underline: SizedBox(),
+                    value: selectedTreatment,
+                    items: treatments.map<DropdownMenuItem<String>>((String value){
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (String value){
+                      setState(() {
+                        selectedTreatment = value;
+                      });
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: MediaQuery.of(context).size.height*0.03,),
+        Center(
+          child: Card(
+            elevation: 15,
+            color: Color(0xf0ff5252),
+            child: Padding(
+              padding: EdgeInsets.all(13),
+              child: Text(
+                'Add Donor',
+                style: kGenderSelected.copyWith(
+                  fontSize: 20
                 ),
               ),
             ),
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height*0.1,
-          )
-        ],
-      ),
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height*0.1,
+        )
+      ],
     );
   }
 }
