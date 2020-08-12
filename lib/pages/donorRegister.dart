@@ -624,7 +624,7 @@ class _DonorRegisterState extends State<DonorRegister> {
                 }
                 else {
                   try {
-                    Firestore.instance.collection("donour").add({
+                    Firestore.instance.collection("donor").add({
                       'name': name,
                       'age': age,
                       'bloodgroup':selectedBloodGroup,

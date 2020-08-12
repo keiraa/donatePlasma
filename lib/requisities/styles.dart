@@ -23,6 +23,12 @@ final kMainLoginTitle = TextStyle(
   fontWeight: FontWeight.w700,
 );
 
+final kTitle = TextStyle(
+  color: Color(0xf0ff5252),
+  fontSize: 23,
+  fontWeight: FontWeight.w700,
+);
+
 final kTagTitle = TextStyle(
     fontSize: 18,
     color: Colors.white,
