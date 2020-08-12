@@ -16,7 +16,7 @@ class _OTPPageState extends State<OTPPage> {
   TextEditingController controller;
   String otp,a;
   FirebaseAuth _auth = FirebaseAuth.instance;
-
+ FirebaseUser user;
 
   Future<bool> loginUser(BuildContext context) async {
     _auth.verifyPhoneNumber(
@@ -27,9 +27,10 @@ class _OTPPageState extends State<OTPPage> {
 
 
 
-          FirebaseUser user = await _auth.currentUser();
+
           try{
             AuthResult result = await _auth.signInWithCredential(credential);
+            user=result.user;
           }catch( e)
           {
             print (e);
@@ -39,7 +40,7 @@ class _OTPPageState extends State<OTPPage> {
           if (user != null) {
             Navigator.pop(context);
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => (RegisterPage())));
+                 MaterialPageRoute(builder: (context) => (RegisterPage())));
           } else {
             print("Error");
           }
