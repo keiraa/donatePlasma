@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:plasmabank/requisities/styles.dart';
@@ -25,6 +27,20 @@ class _PatientRegisterState extends State<PatientRegister> {
   DateTime testDate = DateTime.now();
   bool isBP=false,isDiabetic=false,isPreCondition = false;
   String name,age,hospital,contact,city,state,pinCode,preMedical,moreDetails;
+  var uid;
+
+
+  void getuser()
+ async  {
+       var user= await FirebaseAuth.instance.currentUser();
+        uid=user.uid;
+       }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  getuser();
+  }
 
   Future<void> _selectDate(BuildContext context) async{
     final DateTime picked = await showDatePicker(
@@ -626,15 +642,53 @@ class _PatientRegisterState extends State<PatientRegister> {
         ),
         SizedBox(height: MediaQuery.of(context).size.height*0.03,),
         Center(
-          child: Card(
-            elevation: 15,
-            color: Color(0xf0ff5252),
-            child: Padding(
-              padding: EdgeInsets.all(13),
-              child: Text(
-                'Add Patient',
-                style: kGenderSelected.copyWith(
-                    fontSize: 20
+          child: GestureDetector(
+            onTap: (){
+                setState(() {
+                  if(selectedBloodGroup==null||name==null|| age==null|| selectedGender==null||  city==null||state==null||pinCode==null)
+                  {
+                  }
+                  else {
+                    try {
+                      Firestore.instance.collection("patient").add({
+                        'name': name,
+                        'age': age,
+                        'bloodgroup':selectedBloodGroup,
+                        'gender': selectedGender,
+                        'lastTested': testDate,
+                        'relation': selectedRelation,
+                        'hospital': hospital,
+                        'contact':contact,
+                        'city': city,
+                        'state': state,
+                        'pincode': pinCode,
+                        'bp':isBP,
+                        'diabetes':isDiabetic,
+                        'precondition':isPreCondition,
+                        'premedical': preMedical,
+                        'moredetails': moreDetails,
+                        'uid': uid,
+                        'created': now,
+                        'completed': 0
+
+                      }).then((value) => null);
+                    }catch(e)
+                    {
+                      print(e);
+                    }
+                  }
+                });
+            },
+            child: Card(
+              elevation: 15,
+              color: Color(0xf0ff5252),
+              child: Padding(
+                padding: EdgeInsets.all(13),
+                child: Text(
+                  'Add Patient',
+                  style: kGenderSelected.copyWith(
+                      fontSize: 20
+                  ),
                 ),
               ),
             ),

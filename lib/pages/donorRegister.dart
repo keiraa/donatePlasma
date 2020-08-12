@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -30,12 +31,21 @@ class _DonorRegisterState extends State<DonorRegister> {
 
   String name,age,city,state,pincode,preMedical;
 
+  var uid;
+
+
+  void getuser()
+  async  {
+    var user= await FirebaseAuth.instance.currentUser();
+    uid=user.uid;
+  }
 
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getuser();
     dates = [testDate,recoverDate];
   }
 
@@ -614,13 +624,23 @@ class _DonorRegisterState extends State<DonorRegister> {
                 }
                 else {
                   try {
-                    Firestore.instance.collection("patient").add({
+                    Firestore.instance.collection("donour").add({
                       'name': name,
                       'age': age,
+                      'bloodgroup':selectedBloodGroup,
+                      'gender': selectedGender,
                       'city': city,
                       'state': state,
                       'pincode': pincode,
-                      'preMedical': preMedical
+                      'bp':isBP,
+                      'diabetes':isDiabetic,
+                      'preMedical': preMedical,
+                      'lasttested':testDate,
+                      'recoverdate':recoverDate,
+                      'treatment': selectedTreatment,
+                      'uid': uid,
+                      'created': now,
+                      'completed': 0
                     }).then((value) => null);
                   }catch(e)
                   {
