@@ -101,7 +101,7 @@ class _PatientRegisterState extends State<PatientRegister> {
         Container(
             margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Row(
                   children: <Widget>[
@@ -109,23 +109,26 @@ class _PatientRegisterState extends State<PatientRegister> {
                       'Age',
                       style: kLabelStyle,
                     ),
-                    SizedBox(width: 15,),
+                    SizedBox(width: MediaQuery.of(context).size.width*0.01,),
                     Container(
-                      width: 60,
+                      width: MediaQuery.of(context).size.width*0.15,
                       child: TextField(
+                        keyboardType: TextInputType.number,
                         onChanged: (value){
                           age = value;
                         },
                         textAlign: TextAlign.center,
+                        maxLength: 2,
                         decoration: kTextFieldDecor.copyWith(
-                            hintText: '15'
+                          hintText: '15',
+                          counterText: '',
                         ),
                       ),
                     )
                   ],
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width*0.05,
+                  width: MediaQuery.of(context).size.width*0.04,
                 ),
                 Row(
                   children: <Widget>[
@@ -133,20 +136,21 @@ class _PatientRegisterState extends State<PatientRegister> {
                       'Blood Group',
                       style: kLabelStyle,
                     ),
-                    SizedBox(width: 15,),
+                    SizedBox(width: MediaQuery.of(context).size.width*0.01,),
                     Container(
-                      height: 50,
+                      height: MediaQuery.of(context).size.height*0.06,
                       padding: EdgeInsets.symmetric(horizontal: 7,vertical: 5),
-                      width: 75,
+                      width: MediaQuery.of(context).size.width*0.19,
                       decoration: BoxDecoration(
                         color: Color(0xffef9a9a),
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),
                       child: DropdownButton(
+                        isExpanded: false,
                         dropdownColor: Color(0xffef9a9a),
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                         icon: Icon(
@@ -267,16 +271,19 @@ class _PatientRegisterState extends State<PatientRegister> {
               Row(
                 children: <Widget>[
                   Container(
+                    width: MediaQuery.of(context).size.width*0.45,
+                    height: 45,
                     padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
                     decoration: BoxDecoration(
                       color: Color(0xffef9a9a),
                       borderRadius: BorderRadius.horizontal(left: Radius.circular(10)),
                     ),
-                    child: Text(formatter.format(testDate),style: kDateStyle,),
+                    child: Center(child: Text(formatter.format(testDate),style: kDateStyle,)),
                   ),
                   InkWell(
                     onTap: ()=> _selectDate(context),
                     child: Container(
+                      height: 45,
                       padding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
                       decoration: BoxDecoration(
                         color: Color(0xffffcdd2),
@@ -305,7 +312,7 @@ class _PatientRegisterState extends State<PatientRegister> {
               ),
               SizedBox(width: 15,),
               Container(
-                width: 200,
+                width: MediaQuery.of(context).size.width*0.55,
                 height: 50,
                 padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
                 decoration: BoxDecoration(
@@ -664,8 +671,7 @@ class _PatientRegisterState extends State<PatientRegister> {
                         'pincode': pinCode,
                         'bp':isBP,
                         'diabetes':isDiabetic,
-                        'precondition':isPreCondition,
-                        'premedical': preMedical,
+                        'premedical': isPreCondition?preMedical:'',
                         'moredetails': moreDetails,
                         'uid': uid,
                         'created': now,

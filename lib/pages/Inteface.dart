@@ -94,12 +94,12 @@ class _UsersDisplayState extends State<UsersDisplay> {
             label: ' ',
           ),
           FFNavigationBarItem(
-            iconData: Icons.message,
+            iconData: FontAwesomeIcons.mapMarkerAlt,
             label: ' ',
 //              selectedBackgroundColor: Colors.orange,
           ),
           FFNavigationBarItem(
-            iconData: Icons.language,
+            iconData: FontAwesomeIcons.userAlt,
             label: ' ',
 //              selectedBackgroundColor: Colors.purple,
           ),

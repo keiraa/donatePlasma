@@ -24,10 +24,6 @@ class _OTPPageState extends State<OTPPage> {
         timeout: Duration(seconds: 60),
         verificationCompleted: (AuthCredential credential) async {
           //Navigator.of(context).pop();
-
-
-
-
           try{
             AuthResult result = await _auth.signInWithCredential(credential);
             user=result.user;

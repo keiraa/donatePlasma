@@ -3,8 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:plasmabank/pages/Inteface.dart';
-import 'package:plasmabank/pages/Register.dart';
 import 'package:plasmabank/requisities/styles.dart';
 
 
@@ -54,17 +52,17 @@ class _DonorRegisterState extends State<DonorRegister> {
 
   Future<void> _selectDate(int i,BuildContext context) async{
     final DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: dates[i],
-        firstDate: DateTime(2019,11),
-        lastDate: now,
+      context: context,
+      initialDate: dates[i],
+      firstDate: DateTime(2019,11),
+      lastDate: now,
     );
     if(picked != null && picked!=dates[i])
-      {
-        setState(() {
-          dates[i] = picked;
-        });
-      }
+    {
+      setState(() {
+        dates[i] = picked;
+      });
+    }
   }
 
   void toggleFunctionGender(int k)
@@ -270,97 +268,6 @@ class _DonorRegisterState extends State<DonorRegister> {
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Container(
-                child: Text('Last Tested',style: kLabelStyle,),
-              ),
-              Row(
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width*0.45,
-                    height: 45,
-                    padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                    decoration: BoxDecoration(
-                      color: Color(0xffef9a9a),
-                      borderRadius: BorderRadius.horizontal(left: Radius.circular(10)),
-                    ),
-                    child: Center(child: Text(formatter.format(dates[0]),style: kDateStyle,)),
-                  ),
-                  InkWell(
-                    onTap: ()=> _selectDate(0, context),
-                    child: Container(
-                      height: 45,
-                      padding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-                      decoration: BoxDecoration(
-                        color: Color(0xffffcdd2),
-                        borderRadius: BorderRadius.horizontal(right: Radius.circular(10)),
-                      ),
-                      child: Icon(
-                        FontAwesomeIcons.calendarAlt,
-                        color: Colors.black,
-                      ),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
-        ),
-
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                'Treatment',
-                style: kLabelStyle,
-              ),
-              SizedBox(width: 15,),
-              Container(
-                width: MediaQuery.of(context).size.width*0.55,
-                height: 50,
-                padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                decoration: BoxDecoration(
-                  color: Color(0xffef9a9a),
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                child: DropdownButton(
-                  isExpanded: true,
-                  dropdownColor: Color(0xffef9a9a),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  icon: Icon(
-                    Icons.keyboard_arrow_down,
-                    size: 20,
-                    color: Colors.white,
-                  ),
-                  underline: SizedBox(),
-                  value: selectedTreatment,
-                  items: treatments.map<DropdownMenuItem<String>>((String value){
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String value){
-                    setState(() {
-                      selectedTreatment = value;
-                    });
-                  },
-                ),
-              )
             ],
           ),
         ),
@@ -616,7 +523,7 @@ class _DonorRegisterState extends State<DonorRegister> {
             child:Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Flexible(child: Text('Are you a recovered Patient',style: kLabelStyle,)),
+                Flexible(child: Text('Are you a COVID Patient',style: kLabelStyle,)),
                 Container(
                   child: Switch(
                     value: isCovid,
@@ -631,6 +538,46 @@ class _DonorRegisterState extends State<DonorRegister> {
                 ),
               ],
             )
+        ),
+        Visibility(
+          visible: isCovid,
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Container(
+                  child: Text('Last Tested',style: kLabelStyle,),
+                ),
+                Row(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: Color(0xffef9a9a),
+                        borderRadius: BorderRadius.horizontal(left: Radius.circular(10)),
+                      ),
+                      child: Text(formatter.format(dates[0]),style: kDateStyle,),
+                    ),
+                    InkWell(
+                      onTap: ()=> _selectDate(0, context),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Color(0xffffcdd2),
+                          borderRadius: BorderRadius.horizontal(right: Radius.circular(10)),
+                        ),
+                        child: Icon(
+                          FontAwesomeIcons.calendarAlt,
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
         ),
         Visibility(
           visible: isCovid,
@@ -674,6 +621,58 @@ class _DonorRegisterState extends State<DonorRegister> {
             ),
           ),
         ),
+        Visibility(
+          visible: isCovid,
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  'Treatment',
+                  style: kLabelStyle,
+                ),
+                SizedBox(width: 15,),
+                Container(
+                  width: 200,
+                  height: 50,
+                  padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: Color(0xffef9a9a),
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  child: DropdownButton(
+                    isExpanded: true,
+                    dropdownColor: Color(0xffef9a9a),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    icon: Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 20,
+                      color: Colors.white,
+                    ),
+                    underline: SizedBox(),
+                    value: selectedTreatment,
+                    items: treatments.map<DropdownMenuItem<String>>((String value){
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (String value){
+                      setState(() {
+                        selectedTreatment = value;
+                      });
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
         SizedBox(height: MediaQuery.of(context).size.height*0.03,),
         Center(
           child: GestureDetector(
@@ -694,20 +693,14 @@ class _DonorRegisterState extends State<DonorRegister> {
                       'pincode': pincode,
                       'bp':isBP,
                       'diabetes':isDiabetic,
-                      'preMedical': isPreCondition?preMedical:'',
+                      'preMedical': preMedical,
                       'lasttested':testDate,
                       'recoverdate':recoverDate,
-                      'isRecovered': isCovid,
                       'treatment': selectedTreatment,
-                      'contact':contact,
                       'uid': uid,
                       'created': now,
                       'completed': 0
-                    }).then((value){
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>UsersDisplay()));
-                    });
+                    }).then((value) => null);
                   }catch(e)
                   {
                     print(e);
@@ -723,7 +716,7 @@ class _DonorRegisterState extends State<DonorRegister> {
                 child: Text(
                   'Add Donor',
                   style: kGenderSelected.copyWith(
-                    fontSize: 20
+                      fontSize: 20
                   ),
                 ),
               ),
