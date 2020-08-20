@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:plasmabank/requisities/styles.dart';
@@ -49,7 +50,6 @@ class _DonorViewState extends State<DonorView> {
 //            Navigator.push(context, MaterialPageRoute(builder: (context)=> Chat(code: code,image: img,name: name,puid: puid,)));
           },
           child: Container(
-            margin: EdgeInsets.only(left: MediaQuery.of(context).size.width*0.05,right: MediaQuery.of(context).size.width*0.1),
             child: Column(
               children: <Widget>[
                 Row(
@@ -72,28 +72,33 @@ class _DonorViewState extends State<DonorView> {
                       ],
                     ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Stack(
-                          children: <Widget>[
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Image(
-                                image: AssetImage('images/BloodDrop.png'),
-                                width: 80,
-                                height: 70,
+                        Container(
+                          width: MediaQuery.of(context).size.width*0.09,
+                          height: MediaQuery.of(context).size.height*0.09,
+                          child: Stack(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: Image(
+                                  image: AssetImage('images/BloodDrop.png'),
+                                  fit: BoxFit.fill,
+                                ),
                               ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Container(
-                                  height: 30,
-                                  width: 40,
-                                  margin: EdgeInsets.only(top: 33,left: 20),
-                                  child: Center(child: Text('${widget.bloodGroup}',style: kDateStyle,))
-                              ),
-                            )
-                          ],
+                              Align(
+                                alignment: Alignment.center,
+                                child: Container(
+                                    height: 30,
+                                    width: 40,
+                                    margin: EdgeInsets.only(top: 15),
+                                    child: Center(child: Text('${widget.bloodGroup}',style: kDateStyle,))
+                                ),
+                              )
+                            ],
+                          ),
                         ),
+                        SizedBox(width: MediaQuery.of(context).size.width*0.03,),
                         GestureDetector(
                           onTap: (){
                             setState(() {

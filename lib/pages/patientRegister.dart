@@ -265,8 +265,10 @@ class _PatientRegisterState extends State<PatientRegister> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Container(
-                child: Text('Last Tested',style: kLabelStyle,),
+              Flexible(
+                child: Container(
+                  child: Text('Last Tested',style: kLabelStyle,),
+                ),
               ),
               Row(
                 children: <Widget>[

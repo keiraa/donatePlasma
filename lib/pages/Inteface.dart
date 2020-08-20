@@ -2,6 +2,7 @@ import 'package:ff_navigation_bar/ff_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plasmabank/backend/getJSONdata.dart';
 import 'package:plasmabank/pages/Board.dart';
 import 'package:plasmabank/pages/Profile.dart';
 import 'package:plasmabank/pages/Register.dart';
@@ -43,7 +44,6 @@ class _UsersDisplayState extends State<UsersDisplay> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    //getUser();
   }
 
   @override

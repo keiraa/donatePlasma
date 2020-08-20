@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:plasmabank/backend/getJSONdata.dart';
 import 'package:plasmabank/pages/Inteface.dart';
 import 'package:plasmabank/pages/Register.dart';
 import 'package:plasmabank/requisities/styles.dart';
@@ -22,6 +23,8 @@ class _DonorRegisterState extends State<DonorRegister> {
   DateFormat formatter = DateFormat.yMd();
   DateTime now = DateTime.now();
   List<DateTime> dates;
+
+  MyJSON myJson = MyJSON();
 
 
   //Form Variables
@@ -277,10 +280,11 @@ class _DonorRegisterState extends State<DonorRegister> {
         Container(
           margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Container(
-                child: Text('Last Tested',style: kLabelStyle,),
+              Flexible(
+                child: Container(
+                  child: Text('Last Tested',style: kLabelStyle,),
+                ),
               ),
               Row(
                 children: <Widget>[
@@ -325,40 +329,42 @@ class _DonorRegisterState extends State<DonorRegister> {
                 style: kLabelStyle,
               ),
               SizedBox(width: 15,),
-              Container(
-                width: MediaQuery.of(context).size.width*0.55,
-                height: 50,
-                padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                decoration: BoxDecoration(
-                  color: Color(0xffef9a9a),
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                child: DropdownButton(
-                  isExpanded: true,
-                  dropdownColor: Color(0xffef9a9a),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+              Flexible(
+                child: Container(
+                  width: MediaQuery.of(context).size.width*0.55,
+                  height: 50,
+                  padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: Color(0xffef9a9a),
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  icon: Icon(
-                    Icons.keyboard_arrow_down,
-                    size: 20,
-                    color: Colors.white,
+                  child: DropdownButton(
+                    isExpanded: true,
+                    dropdownColor: Color(0xffef9a9a),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    icon: Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 20,
+                      color: Colors.white,
+                    ),
+                    underline: SizedBox(),
+                    value: selectedTreatment,
+                    items: treatments.map<DropdownMenuItem<String>>((String value){
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (String value){
+                      setState(() {
+                        selectedTreatment = value;
+                      });
+                    },
                   ),
-                  underline: SizedBox(),
-                  value: selectedTreatment,
-                  items: treatments.map<DropdownMenuItem<String>>((String value){
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String value){
-                    setState(() {
-                      selectedTreatment = value;
-                    });
-                  },
                 ),
               )
             ],
@@ -484,6 +490,7 @@ class _DonorRegisterState extends State<DonorRegister> {
                       setState(() {
                         isPincode = true;
                       });
+                      myJson.getData(pincode);
                     }
                     else{
                       setState(() {
@@ -724,6 +731,32 @@ class _DonorRegisterState extends State<DonorRegister> {
                   'Add Donor',
                   style: kGenderSelected.copyWith(
                     fontSize: 20
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        SizedBox(height: MediaQuery.of(context).size.height*0.03,),
+        Center(
+          child: GestureDetector(
+            onTap: (){
+              print(myJson.getCity());
+              print(myJson.getDistrict());
+              print(myJson.getDivision());
+              print(myJson.getRegion());
+              print(myJson.getState());
+            },
+            child: Card(
+              elevation: 15,
+              color: Color(0xf0ff5252),
+              child: Padding(
+                padding: EdgeInsets.all(13),
+                child: Text(
+                  'Get City',
+                  style: kGenderSelected.copyWith(
+                      fontSize: 20
                   ),
                 ),
               ),

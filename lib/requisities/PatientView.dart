@@ -71,27 +71,32 @@ class _PatientViewState extends State<PatientView> {
                   ),
                   Row(
                     children: <Widget>[
-                      Stack(
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Image(
-                              image: AssetImage('images/BloodDrop.png'),
-                              width: 80,
-                              height: 70,
+                      Container(
+                        width: MediaQuery.of(context).size.width*0.09,
+                        height: MediaQuery.of(context).size.height*0.09,
+                        child: Stack(
+                          children: <Widget>[
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Image(
+                                image: AssetImage('images/BloodDrop.png'),
+                                fit: BoxFit.fill,
+                              ),
                             ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Container(
-                                height: 30,
-                                width: 40,
-                                margin: EdgeInsets.only(top: 33,left: 20),
-                                child: Center(child: Text('${widget.bloodGroup}',style: kDateStyle,))
-                            ),
-                          )
-                        ],
+                            Align(
+                              alignment: Alignment.center,
+                              child: Container(
+                                  height: 30,
+                                  width: 40,
+                                  margin: EdgeInsets.only(top: 15),
+                                  child: Center(child: Text('${widget.bloodGroup}',style: kDateStyle,))
+                              ),
+                            )
+                          ],
+                        ),
                       ),
+
+                      SizedBox(width: MediaQuery.of(context).size.width*0.03,),
                       GestureDetector(
                         onTap: (){
                           setState(() {
