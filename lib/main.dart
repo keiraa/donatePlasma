@@ -7,7 +7,7 @@ import 'package:plasmabank/pages/Register.dart';
 void main() {
   runApp(
       MaterialApp(
-          home: RegisterPage(),
+          home: UsersDisplay(),
       )
   );
 }

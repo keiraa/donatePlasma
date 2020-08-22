@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:plasmabank/backend/getJSONdata.dart';
+import 'package:plasmabank/pages/Inteface.dart';
 import 'package:plasmabank/requisities/styles.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -19,6 +22,8 @@ class _PatientRegisterState extends State<PatientRegister> {
   DateFormat formatter = DateFormat.yMd();
   DateTime now = DateTime.now();
 
+  MyJSON myJson = MyJSON();
+  double isSpinning = 0;
 
   //Form Variables
   String selectedBloodGroup = 'A+';
@@ -431,6 +436,49 @@ class _PatientRegisterState extends State<PatientRegister> {
               Container(
                 width: MediaQuery.of(context).size.width*0.19,
                 child: Text(
+                  'Pincode',
+                  style: kLabelStyle,
+                ),
+              ),
+              SizedBox(width: 15,),
+              Flexible(
+                child: TextField(
+                  onChanged: (value){
+                    pinCode = value.trim();
+                    if(value.length == 6)
+                    {
+                      setState(() {
+                        isPincode = true;
+                      });
+                      myJson.getData(pinCode);
+                    }
+                    else{
+                      setState(() {
+                        isPincode = false;
+                      });
+                    }
+                  },
+                  textAlign: TextAlign.center,
+                  maxLength: 6,
+                  keyboardType: TextInputType.phone,
+                  decoration: kTextFieldDecor.copyWith(
+                      hintText: 'Ex: 530017',
+                      counterText: '',
+                      errorText: isPincode?null:'Please enter a valid Pincode'
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width*0.19,
+                child: Text(
                   'City',
                   style: kLabelStyle,
                 ),
@@ -478,47 +526,7 @@ class _PatientRegisterState extends State<PatientRegister> {
           ),
         ),
 
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
-          child: Row(
-            children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).size.width*0.19,
-                child: Text(
-                  'Pincode',
-                  style: kLabelStyle,
-                ),
-              ),
-              SizedBox(width: 15,),
-              Flexible(
-                child: TextField(
-                  onChanged: (value){
-                    pinCode = value.trim();
-                    if(value.length == 6)
-                      {
-                        setState(() {
-                          isPincode = true;
-                        });
-                      }
-                    else{
-                      setState(() {
-                        isPincode = false;
-                      });
-                    }
-                  },
-                  textAlign: TextAlign.center,
-                  maxLength: 6,
-                  keyboardType: TextInputType.phone,
-                  decoration: kTextFieldDecor.copyWith(
-                    hintText: 'Ex: 530017',
-                    counterText: '',
-                    errorText: isPincode?null:'Please enter a valid Pincode'
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
+
 
         SizedBox(
           height: MediaQuery.of(context).size.height*0.05,
@@ -652,40 +660,86 @@ class _PatientRegisterState extends State<PatientRegister> {
         SizedBox(height: MediaQuery.of(context).size.height*0.03,),
         Center(
           child: GestureDetector(
-            onTap: (){
-                setState(() {
-                  if(selectedBloodGroup==null||name==null|| age==null|| selectedGender==null||  city==null||state==null||pinCode==null)
+            onTap: () async{
+              var result= await Firestore.instance.collection('indiancities').document('cities').get();
+              print( await result.data['places'].toList());
+              var cities=result.data['places'].toList();
+              setState(() {
+                isSpinning = 20;
+              });
+              if(selectedBloodGroup==null||name==null|| age==null|| selectedGender==null||  city==null||state==null||pinCode==null)
+              {
+              }
+              else {
+                try {
+                  if (!cities.contains(myJson.getState()))
                   {
+                    Firestore.instance.collection('indiancities').document(
+                        'cities').updateData({
+                      'places': FieldValue.arrayUnion([myJson.getState()])
+                    });
                   }
-                  else {
-                    try {
-                      Firestore.instance.collection("patient").add({
-                        'name': name,
-                        'age': age,
-                        'bloodgroup':selectedBloodGroup,
-                        'gender': selectedGender,
-                        'lastTested': testDate,
-                        'relation': selectedRelation,
-                        'hospital': hospital,
-                        'contact':contact,
-                        'city': city,
-                        'state': state,
-                        'pincode': pinCode,
-                        'bp':isBP,
-                        'diabetes':isDiabetic,
-                        'premedical': isPreCondition?preMedical:'',
-                        'moredetails': moreDetails,
-                        'uid': uid,
-                        'created': now,
-                        'completed': 0
+                  if (!cities.contains(myJson.getRegion()))
+                  {
+                    Firestore.instance.collection('indiancities').document(
+                        'cities').updateData({
+                      'places': FieldValue.arrayUnion([myJson.getRegion()])
+                    });
+                  }
+                  if (!cities.contains(myJson.getDistrict()))
+                  {
+                    Firestore.instance.collection('indiancities').document(
+                        'cities').updateData({
+                      'places': FieldValue.arrayUnion([myJson.getDistrict()])
+                    });
+                  }
+                  if (!cities.contains(myJson.getDivision()))
+                  {
+                    Firestore.instance.collection('indiancities').document(
+                        'cities').updateData({
+                      'places': FieldValue.arrayUnion([myJson.getDivision()])
+                    });
+                  }
+                  if (!cities.contains(myJson.getCity()))
+                  {
+                    Firestore.instance.collection('indiancities').document(
+                        'cities').updateData({
+                      'places': FieldValue.arrayUnion([myJson.getCity()])
+                    });
+                  }
 
-                      }).then((value) => null);
-                    }catch(e)
-                    {
-                      print(e);
-                    }
-                  }
-                });
+                  Firestore.instance.collection("patient").add({
+                    'name': name,
+                    'age': age,
+                    'bloodgroup':selectedBloodGroup,
+                    'gender': selectedGender,
+                    'lastTested': testDate,
+                    'relation': selectedRelation,
+                    'hospital': hospital,
+                    'contact':contact,
+                    'city': city,
+                    'state': state,
+                    'pincode': pinCode,
+                    'bp':isBP,
+                    'diabetes':isDiabetic,
+                    'premedical': isPreCondition?preMedical:'',
+                    'moredetails': moreDetails,
+                    'uid': uid,
+                    'created': now,
+                    'completed': 0
+
+                  }).then((value) {
+                    setState(() {
+                      isSpinning = 0;
+                    });
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>UsersDisplay()));
+                  });
+                }catch(e)
+                {
+                  print(e);
+                }
+              }
             },
             child: Card(
               elevation: 15,
@@ -699,6 +753,15 @@ class _PatientRegisterState extends State<PatientRegister> {
                   ),
                 ),
               ),
+            ),
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.only(top: 5),
+          child: Center(
+            child: SpinKitThreeBounce(
+              color: Color(0xf0ff5252),
+              size: isSpinning,
             ),
           ),
         ),

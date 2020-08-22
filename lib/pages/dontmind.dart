@@ -730,3 +730,56 @@ class _DonorRegisterState extends State<DonorRegister> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class FieldLikeContainer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 15),
+      child: Row(
+        children: <Widget>[
+          Container(
+            width: MediaQuery.of(context).size.width*0.19,
+            child: Text(
+              'City',
+              style: kLabelStyle,
+            ),
+          ),
+          SizedBox(width: 15,),
+          Flexible(
+              child: Container(
+                height: MediaQuery.of(context).size.height*0.065,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  color: Color(0xffffebee),
+                ),
+                child: Center(
+                  child: Text(
+                    'City',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              )
+          )
+        ],
+      ),
+    );
+  }
+}

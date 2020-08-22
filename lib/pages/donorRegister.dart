@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:plasmabank/backend/getJSONdata.dart';
@@ -23,6 +24,8 @@ class _DonorRegisterState extends State<DonorRegister> {
   DateFormat formatter = DateFormat.yMd();
   DateTime now = DateTime.now();
   List<DateTime> dates;
+
+  double isSpinning=0;
 
   MyJSON myJson = MyJSON();
 
@@ -57,17 +60,17 @@ class _DonorRegisterState extends State<DonorRegister> {
 
   Future<void> _selectDate(int i,BuildContext context) async{
     final DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: dates[i],
-        firstDate: DateTime(2019,11),
-        lastDate: now,
+      context: context,
+      initialDate: dates[i],
+      firstDate: DateTime(2019,11),
+      lastDate: now,
     );
     if(picked != null && picked!=dates[i])
-      {
-        setState(() {
-          dates[i] = picked;
-        });
-      }
+    {
+      setState(() {
+        dates[i] = picked;
+      });
+    }
   }
 
   void toggleFunctionGender(int k)
@@ -280,6 +283,7 @@ class _DonorRegisterState extends State<DonorRegister> {
         Container(
           margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Flexible(
                 child: Container(
@@ -684,13 +688,61 @@ class _DonorRegisterState extends State<DonorRegister> {
         SizedBox(height: MediaQuery.of(context).size.height*0.03,),
         Center(
           child: GestureDetector(
-            onTap: (){
+            onTap: () async{
+              print(myJson.getCity());
+              print(myJson.getDistrict());
+              print(myJson.getDivision());
+              print(myJson.getRegion());
+              print(myJson.getState());
               setState(() {
+                isSpinning = 20;
+              });
+
+
+              var result= await Firestore.instance.collection('indiancities').document('cities').get();
+              print( await result.data['places'].toList());
+              var cities=result.data['places'].toList();
                 if(selectedBloodGroup==null||selectedTreatment==null||name==null|| age==null|| selectedGender==null||  city==null||state==null||pincode==null)
                 {
                 }
                 else {
                   try {
+                    if (!cities.contains(myJson.getState()))
+                    {
+                      Firestore.instance.collection('indiancities').document(
+                          'cities').updateData({
+                        'places': FieldValue.arrayUnion([myJson.getState()])
+                      });
+                    }
+                    if (!cities.contains(myJson.getRegion()))
+                    {
+                      Firestore.instance.collection('indiancities').document(
+                          'cities').updateData({
+                        'places': FieldValue.arrayUnion([myJson.getRegion()])
+                      });
+                    }
+                    if (!cities.contains(myJson.getDistrict()))
+                    {
+                      Firestore.instance.collection('indiancities').document(
+                          'cities').updateData({
+                        'places': FieldValue.arrayUnion([myJson.getDistrict()])
+                      });
+                    }
+                    if (!cities.contains(myJson.getDivision()))
+                    {
+                      Firestore.instance.collection('indiancities').document(
+                          'cities').updateData({
+                        'places': FieldValue.arrayUnion([myJson.getDivision()])
+                      });
+                    }
+                    if (!cities.contains(myJson.getCity()))
+                    {
+                      Firestore.instance.collection('indiancities').document(
+                          'cities').updateData({
+                        'places': FieldValue.arrayUnion([myJson.getCity()])
+                      });
+                    }
+
                     Firestore.instance.collection("donor").add({
                       'name': name,
                       'age': age,
@@ -711,16 +763,19 @@ class _DonorRegisterState extends State<DonorRegister> {
                       'created': now,
                       'completed': 0
                     }).then((value){
-                      Navigator.pop(context);
+                      setState(() {
+                        isSpinning = 0;
+                      });
                       Navigator.pop(context);
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>UsersDisplay()));
                     });
+
+
                   }catch(e)
                   {
                     print(e);
                   }
                 }
-              });
             },
             child: Card(
               elevation: 15,
@@ -730,36 +785,19 @@ class _DonorRegisterState extends State<DonorRegister> {
                 child: Text(
                   'Add Donor',
                   style: kGenderSelected.copyWith(
-                    fontSize: 20
+                      fontSize: 20
                   ),
                 ),
               ),
             ),
           ),
         ),
-
-        SizedBox(height: MediaQuery.of(context).size.height*0.03,),
-        Center(
-          child: GestureDetector(
-            onTap: (){
-              print(myJson.getCity());
-              print(myJson.getDistrict());
-              print(myJson.getDivision());
-              print(myJson.getRegion());
-              print(myJson.getState());
-            },
-            child: Card(
-              elevation: 15,
+        Container(
+          margin: EdgeInsets.only(top: 5),
+          child: Center(
+            child: SpinKitThreeBounce(
               color: Color(0xf0ff5252),
-              child: Padding(
-                padding: EdgeInsets.all(13),
-                child: Text(
-                  'Get City',
-                  style: kGenderSelected.copyWith(
-                      fontSize: 20
-                  ),
-                ),
-              ),
+              size: isSpinning,
             ),
           ),
         ),

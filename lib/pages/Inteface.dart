@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ff_navigation_bar/ff_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,10 @@ import 'package:plasmabank/pages/Board.dart';
 import 'package:plasmabank/pages/Profile.dart';
 import 'package:plasmabank/pages/Register.dart';
 import 'package:plasmabank/requisities/styles.dart';
+
+
+List citiesGlobal;
+
 
 class UsersDisplay extends StatefulWidget {
   @override
@@ -39,11 +44,18 @@ class _UsersDisplayState extends State<UsersDisplay> {
   }
 
 
+  getData() async{
+    var result= await Firestore.instance.collection('indiancities').document('cities').get();
+    print( await result.data['places'].toList());
+    citiesGlobal=result.data['places'].toList();
+    print(citiesGlobal);
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getData();
   }
 
   @override
@@ -51,7 +63,11 @@ class _UsersDisplayState extends State<UsersDisplay> {
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
-        appBar: AppBar(
+        appBar: selectedIndex==0?PreferredSize(
+          preferredSize: Size(0,0),
+          child: Container(),
+        ):
+        AppBar(
           backgroundColor: Color(0xf0ff5252),
           elevation: 0,
           title: searchBar?TextField(
@@ -93,15 +109,24 @@ class _UsersDisplayState extends State<UsersDisplay> {
                 child: Column(
                   children: <Widget>[
                     Container(
+                      height:50,
                       margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.13,vertical: 15),
-                      child: TextField(
-                        onChanged: (value){
+                      child: GestureDetector(
+                        onTap: (){
+                          showSearch(context: context, delegate: DataSearch());
                         },
-                        textAlign: TextAlign.center,
-                        decoration: kTextFieldDecor.copyWith(
-                            hintText: 'Enter City Name',
-                          fillColor: Colors.white,
-                          border: InputBorder.none
+                        child: Card(
+                          margin: EdgeInsets.zero,
+                          child: Center(
+                            child: Text(
+                                DataSearch.finalValue.isEmpty?'Select your City':DataSearch.finalValue,
+                              style: TextStyle(
+                                color: Color(0xf0ff5252),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -225,13 +250,16 @@ class _UsersDisplayState extends State<UsersDisplay> {
                 ),
               ),
             ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.01),
-              padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.01),
-              child: Icon(
-                Icons.info,
-                color: Colors.red,
-                size: 25,
+            Visibility(
+              visible: selectedIndex!=0,
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.01),
+                padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.01),
+                child: Icon(
+                  Icons.info,
+                  color: Colors.red,
+                  size: 25,
+                ),
               ),
             ),
             Expanded(child: screens[selectedIndex])
@@ -273,4 +301,75 @@ class _UsersDisplayState extends State<UsersDisplay> {
       ),
     );
   }
+}
+
+
+class DataSearch extends SearchDelegate<String>{
+  static String finalValue = "";
+
+  List cities = citiesGlobal;
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    // TODO: implement buildActions
+    return[
+      IconButton(icon: Icon(Icons.clear), onPressed:(){
+        query="";
+        finalValue = query;
+        close(context, query);
+      } )
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    // TODO: implement buildLeading
+    return IconButton(
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow,
+        progress: transitionAnimation,
+      ),
+      onPressed: (){
+        close(context, null);
+      },
+
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // TODO: implement buildResults
+    return Container();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    // TODO: implement buildSuggestions
+    final suggestionlist= cities.where((p)=> p.toString().toLowerCase().startsWith(query)).toList();
+    return ListView.builder(itemBuilder: (context,index)=> ListTile(
+      onTap: (){
+        query = suggestionlist[index];
+        finalValue = query;
+        showResults(context);
+        close(context, query);
+      },
+      leading :Icon(Icons.location_city),
+      title: RichText(
+          text: TextSpan(
+            text: suggestionlist[index].substring(0,query.length),
+            style: TextStyle(
+                color: Colors.black,fontWeight: FontWeight.bold
+            ),
+            children:  [TextSpan(
+                text: suggestionlist[index].substring(query.length),
+                style: TextStyle(color: Colors.grey)
+            )
+            ],
+          )
+      ),
+    ),
+      itemCount: suggestionlist.length,
+    );
+  }
+
 }
