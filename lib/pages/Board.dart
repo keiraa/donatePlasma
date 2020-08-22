@@ -8,6 +8,8 @@ import 'package:plasmabank/requisities/PatientView.dart';
 
 
 class BoardPage extends StatefulWidget {
+  BoardPage({this.searchedQuery,this.gender,this.bloodGroup});
+  final String searchedQuery,bloodGroup,gender;
   @override
   _BoardPageState createState() => _BoardPageState();
 }
@@ -18,6 +20,7 @@ class _BoardPageState extends State<BoardPage> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseUser _user;
   List<bool> isSelected = [true,false];
+  int gender;
 
   void toggleMenu(int ind){
     setState(() {
@@ -42,8 +45,11 @@ class _BoardPageState extends State<BoardPage> {
     getUser();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
+    gender = widget.gender=='M'?0:widget.gender=='F'?1:2;
     return Container(
         child: Column(
           children: <Widget>[
@@ -68,7 +74,11 @@ class _BoardPageState extends State<BoardPage> {
             SizedBox(height: 20,),
               Flexible(
                   child: StreamBuilder<QuerySnapshot>(
-                      stream: isSelected[0]?firestore.collection('donor').snapshots():firestore.collection('patient').snapshots(),
+                      stream: isSelected[0]?(widget.searchedQuery.isEmpty?firestore.collection('donor').snapshots(): firestore.collection('donor').where("city",isEqualTo: widget.searchedQuery).where('bloodgroup',isEqualTo: widget.bloodGroup).where('gender',isEqualTo: gender).snapshots())
+                          :
+                      (widget.searchedQuery.isEmpty?firestore.collection('patient').snapshots(): firestore.collection('patient').where("city",isEqualTo: widget.searchedQuery).where('bloodgroup',isEqualTo: widget.bloodGroup).where('gender',isEqualTo: gender).snapshots()),
+                      
+                      
                       builder: (context,snapshot){
                         if(snapshot.connectionState == ConnectionState.waiting){
                           return Center(child: CircularProgressIndicator());
@@ -118,6 +128,21 @@ class _BoardPageState extends State<BoardPage> {
                                 );
                               }
                           }
+                          if(usersList.isEmpty)
+                            {
+                              return Container(
+                                child: Center(
+                                  child: Text(
+                                    '🙁 No Results Found',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.grey
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
                           return ListView(
                             children: usersList,
                           );

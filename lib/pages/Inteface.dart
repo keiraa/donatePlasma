@@ -22,12 +22,13 @@ class _UsersDisplayState extends State<UsersDisplay> {
   int selectedIndex=1;
   bool searchBar = false;
 
-  List<Widget> screens = [RegisterPage(),BoardPage(),ProfilePage()];
+  List<Widget> screens = [RegisterPage(),BoardPage(searchedQuery: DataSearch.finalValue,),ProfilePage()];
   List<String> headings = ['Forms','Board','Profile'];
   List<String> bloodGroups = ['A+','B+','AB+','O+','A-','B-','AB-','O-'];
   String selectedBloodGroup = 'A+';
   String selectedGender = 'M';
   List<String> gender = ['M','F','O'];
+  bool isSearched = false;
 
   Future<bool> onWillPop(){
     if(searchBar)
@@ -75,10 +76,27 @@ class _UsersDisplayState extends State<UsersDisplay> {
             style: kInfoText.copyWith(color: Colors.white),
             cursorColor: Colors.white,
           ):Center(child: Text(headings[selectedIndex],style: kGenderSelected,),),
-          leading: Icon(
-            Icons.arrow_back,
-            size: 30,
-            color: Colors.white,
+          leading: GestureDetector(
+            onTap: (){
+              //TODO: Back Functionality
+              if(isSearched)
+                {
+                  setState(() {
+                    screens[1] = BoardPage(searchedQuery: '',);
+                  });
+                }
+              else
+                {
+                  setState(() {
+                    selectedIndex = 0;
+                  });
+                }
+            },
+            child: Icon(
+              Icons.arrow_back,
+              size: 30,
+              color: Colors.white,
+            ),
           ),
           actions: <Widget>[
             Padding(
@@ -144,8 +162,8 @@ class _UsersDisplayState extends State<UsersDisplay> {
                               SizedBox(width: MediaQuery.of(context).size.width*0.01,),
                               Container(
                                 height: MediaQuery.of(context).size.height*0.05,
-                                padding: EdgeInsets.symmetric(horizontal: 8,vertical: 5),
-                                width: MediaQuery.of(context).size.width*0.16,
+                                padding: EdgeInsets.only(top: 5,bottom: 5,left: 8,right: 2),
+                                width: MediaQuery.of(context).size.width*0.17,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                 ),
@@ -192,6 +210,7 @@ class _UsersDisplayState extends State<UsersDisplay> {
                                   color: Colors.white,
                                 ),
                                 child: DropdownButton(
+                                  isExpanded: true,
                                   style: TextStyle(
                                     color: Color(0xf0ff1744),
                                     fontSize: 18,
@@ -223,23 +242,33 @@ class _UsersDisplayState extends State<UsersDisplay> {
                       ),
                     ),
                     Center(
-                      child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 15),
-                        width: 100,
-                        height: 50,
-                        child: Card(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(30)),
-                          ),
-                          elevation: 20,
-                          child: Center(
-                            child: Text(
-                              'Search',
-                              style: TextStyle(
-                                color: Color(0xffd50000),
-                                fontSize: 21,
-                                fontWeight: FontWeight.bold,
+                      child: GestureDetector(
+                        onTap: (){
+                          //TODO: Search Functionality
+                          setState(() {
+                            searchBar = false;
+                            isSearched = true;
+                            screens[1] = BoardPage(searchedQuery: DataSearch.finalValue,bloodGroup: selectedBloodGroup,gender: selectedGender,);
+                          });
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(vertical: 15),
+                          width: 100,
+                          height: 50,
+                          child: Card(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(30)),
+                            ),
+                            elevation: 20,
+                            child: Center(
+                              child: Text(
+                                'Search',
+                                style: TextStyle(
+                                  color: Color(0xffd50000),
+                                  fontSize: 21,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
@@ -345,7 +374,7 @@ class DataSearch extends SearchDelegate<String>{
   @override
   Widget buildSuggestions(BuildContext context) {
     // TODO: implement buildSuggestions
-    final suggestionlist= cities.where((p)=> p.toString().toLowerCase().startsWith(query)).toList();
+    final suggestionlist= cities.where((p)=> p.toString().startsWith(query)).toList();
     return ListView.builder(itemBuilder: (context,index)=> ListTile(
       onTap: (){
         query = suggestionlist[index];
