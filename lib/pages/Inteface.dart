@@ -1,3 +1,4 @@
+import 'package:bubble/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ff_navigation_bar/ff_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,12 @@ import 'package:plasmabank/pages/Board.dart';
 import 'package:plasmabank/pages/Profile.dart';
 import 'package:plasmabank/pages/Register.dart';
 import 'package:plasmabank/requisities/styles.dart';
+
+
+
+
+String disclaimer = 'The information provided by public on Trana – Blood Plasma dB our mobile application is about the Blood group and general health informational which is for social service purposes only. \nAll information on the Site and our mobile application is provided in good faith, however we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability or completeness of any information on the Site or our mobile application. \nUNDER NO CIRCUMSTANCE SHALL WE HAVE ANY LIABILITY TO YOU FOR ANY LOSS OR DAMAGE OF ANY KIND INCURRED AS A RESULT OF THE USE OF THE SITE OR OUR MOBILE APPLICATION OR RELIANCE ON ANY INFORMATION PROVIDED ON THE SITE AND OUR MOBILE APPLICATION. YOUR USE OF THE SITE AND OUR MOBILE APPLICATION AND YOUR RELIANCE ON ANY INFORMATION ON THE SITE AND OUR MOBILE APPLICATION IS SOLELY AT YOUR OWN RISK.';
+
 
 
 List citiesGlobal;
@@ -281,14 +288,38 @@ class _UsersDisplayState extends State<UsersDisplay> {
             ),
             Visibility(
               visible: selectedIndex!=0,
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.01),
-                padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.01),
-                child: Icon(
-                  Icons.info,
-                  color: Colors.red,
-                  size: 25,
-                ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.01),
+                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.01),
+                    child: Icon(
+                      Icons.info,
+                      color: Colors.red,
+                      size: 25,
+                    ),
+                  ),
+                  Flexible(
+                    child: Container(
+                      margin: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.025),
+                      width: MediaQuery.of(context).size.width*0.85,
+                      child: Bubble(
+                        padding: BubbleEdges.all(10),
+                        color: Colors.red,
+                        stick: true,
+                        nip: BubbleNip.leftTop,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text('Disclaimer :\n', style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                            Text(disclaimer,style: TextStyle(color: Colors.white, fontSize: 12,fontWeight: FontWeight.w500),)
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Expanded(child: screens[selectedIndex])
