@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:plasmabank/backend/getJSONdata.dart';
 import 'package:plasmabank/pages/Inteface.dart';
+import 'package:plasmabank/pages/termsAndConditions.dart';
 import 'package:plasmabank/requisities/styles.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -30,7 +34,7 @@ class _PatientRegisterState extends State<PatientRegister> {
   String selectedRelation = 'Parents';
   List<String> genders = ['M','F','O'];
   DateTime testDate = DateTime.now();
-  bool isBP=false,isDiabetic=false,isPreCondition = false;
+  bool isBP=false,isDiabetic=false,isPreCondition = false, tAndC = false,acceptTandC = false;
   String name,age,hospital,contact,city,state,pinCode,preMedical,moreDetails;
   var uid;
 
@@ -658,86 +662,158 @@ class _PatientRegisterState extends State<PatientRegister> {
           ),
         ),
         SizedBox(height: MediaQuery.of(context).size.height*0.03,),
+
+        Container(
+          margin: EdgeInsets.only(left: MediaQuery.of(context).size.width*0.043,right: MediaQuery.of(context).size.width*0.08),
+          child: Column(
+            children: <Widget>[
+              Visibility(
+                visible: acceptTandC,
+                child: Container(
+                    margin: EdgeInsets.only(bottom: 2),
+                    child: Text('please accept the terms and conditions to proceed', style: TextStyle(color: Colors.red,),)
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    height:20,
+                    width: 20,
+                    child: Checkbox(
+                      value: tAndC,
+                      activeColor: Color(0xf0ff5252),
+                      materialTapTargetSize: MaterialTapTargetSize.padded,
+                      onChanged: (x){
+                        setState(() {
+                          tAndC = !tAndC;
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 5,),
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                          style: TextStyle(color: Colors.black),
+                          children: [
+                            TextSpan(text: 'By creating an account you agree to our', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),
+                            TextSpan(
+                                text: ' terms and conditions',
+                                style: TextStyle(color: Color(0xf0ff5252),fontWeight: FontWeight.w600, fontSize: 16),
+                                recognizer: TapGestureRecognizer()..onTap = (){
+                                  showDialog(context: context, builder: (context)=>TermsAndConditions());
+                                }
+                            ),
+                          ]
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ],
+          )
+        ),
+
+        SizedBox(height: MediaQuery.of(context).size.height*0.03,),
+
+
         Center(
           child: GestureDetector(
             onTap: () async{
-              var result= await Firestore.instance.collection('indiancities').document('cities').get();
-              print( await result.data['places'].toList());
-              var cities=result.data['places'].toList();
-              setState(() {
-                isSpinning = 20;
-              });
-              if(selectedBloodGroup==null||name==null|| age==null|| selectedGender==null||  city==null||state==null||pinCode==null)
-              {
+              if(!tAndC){
+                setState(() {
+                  acceptTandC = true;
+                });
               }
-              else {
-                try {
-                  if (!cities.contains(myJson.getState()))
-                  {
-                    Firestore.instance.collection('indiancities').document(
-                        'cities').updateData({
-                      'places': FieldValue.arrayUnion([myJson.getState()])
-                    });
-                  }
-                  if (!cities.contains(myJson.getRegion()))
-                  {
-                    Firestore.instance.collection('indiancities').document(
-                        'cities').updateData({
-                      'places': FieldValue.arrayUnion([myJson.getRegion()])
-                    });
-                  }
-                  if (!cities.contains(myJson.getDistrict()))
-                  {
-                    Firestore.instance.collection('indiancities').document(
-                        'cities').updateData({
-                      'places': FieldValue.arrayUnion([myJson.getDistrict()])
-                    });
-                  }
-                  if (!cities.contains(myJson.getDivision()))
-                  {
-                    Firestore.instance.collection('indiancities').document(
-                        'cities').updateData({
-                      'places': FieldValue.arrayUnion([myJson.getDivision()])
-                    });
-                  }
-                  if (!cities.contains(myJson.getCity()))
-                  {
-                    Firestore.instance.collection('indiancities').document(
-                        'cities').updateData({
-                      'places': FieldValue.arrayUnion([myJson.getCity()])
-                    });
-                  }
-
-                  Firestore.instance.collection("patient").add({
-                    'name': name,
-                    'age': age,
-                    'bloodgroup':selectedBloodGroup,
-                    'gender': selectedGender,
-                    'lastTested': testDate,
-                    'relation': selectedRelation,
-                    'hospital': hospital,
-                    'contact':contact,
-                    'city': myJson.getCity(),
-                    'state': myJson.getState(),
-                    'pincode': pinCode,
-                    'bp':isBP,
-                    'diabetes':isDiabetic,
-                    'premedical': isPreCondition?preMedical:'',
-                    'moredetails': moreDetails,
-                    'uid': uid,
-                    'created': now,
-                    'completed': 0
-
-                  }).then((value) {
-                    setState(() {
-                      isSpinning = 0;
-                    });
-                    Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>UsersDisplay()));
-                  });
-                }catch(e)
+              else{
+                var result= await Firestore.instance.collection('indiancities').document('cities').get();
+                print( await result.data['places'].toList());
+                var cities=result.data['places'].toList();
+                setState(() {
+                  isSpinning = 20;
+                });
+                if(selectedBloodGroup==null||name==null|| age==null|| selectedGender==null||  city==null||state==null||pinCode==null)
                 {
-                  print(e);
+                  Fluttertoast.showToast(
+                    msg: 'Please fill all details',
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Color(0xffe57373),
+                    textColor: Colors.white,
+                    fontSize: 18
+                  );
+                }
+                else {
+                  try {
+                    if (!cities.contains(myJson.getState()))
+                    {
+                      Firestore.instance.collection('indiancities').document(
+                          'cities').updateData({
+                        'places': FieldValue.arrayUnion([myJson.getState()])
+                      });
+                    }
+                    if (!cities.contains(myJson.getRegion()))
+                    {
+                      Firestore.instance.collection('indiancities').document(
+                          'cities').updateData({
+                        'places': FieldValue.arrayUnion([myJson.getRegion()])
+                      });
+                    }
+                    if (!cities.contains(myJson.getDistrict()))
+                    {
+                      Firestore.instance.collection('indiancities').document(
+                          'cities').updateData({
+                        'places': FieldValue.arrayUnion([myJson.getDistrict()])
+                      });
+                    }
+                    if (!cities.contains(myJson.getDivision()))
+                    {
+                      Firestore.instance.collection('indiancities').document(
+                          'cities').updateData({
+                        'places': FieldValue.arrayUnion([myJson.getDivision()])
+                      });
+                    }
+                    if (!cities.contains(myJson.getCity()))
+                    {
+                      Firestore.instance.collection('indiancities').document(
+                          'cities').updateData({
+                        'places': FieldValue.arrayUnion([myJson.getCity()])
+                      });
+                    }
+
+                    Firestore.instance.collection("patient").add({
+                      'name': name,
+                      'age': age,
+                      'bloodgroup':selectedBloodGroup,
+                      'gender': selectedGender,
+                      'lastTested': testDate,
+                      'relation': selectedRelation,
+                      'hospital': hospital,
+                      'contact':contact,
+                      'city': myJson.getCity(),
+                      'state': myJson.getState(),
+                      'pincode': pinCode,
+                      'bp':isBP,
+                      'diabetes':isDiabetic,
+                      'premedical': isPreCondition?preMedical:'',
+                      'moredetails': moreDetails,
+                      'uid': uid,
+                      'created': now,
+                      'completed': 0
+
+                    }).then((value) {
+                      setState(() {
+                        isSpinning = 0;
+                      });
+                      Navigator.pop(context);
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>UsersDisplay()));
+                    });
+                  }catch(e)
+                  {
+                    print(e);
+                  }
                 }
               }
             },

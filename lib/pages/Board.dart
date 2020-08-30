@@ -111,7 +111,7 @@ class _BoardPageState extends State<BoardPage> {
                             var created = data.data['created'];
                             var moreDetails = data.data['moredetails'];
                             var uid = data.data['uid'];
-                            if(true)
+                            if(_user.uid != uid)
                               {
                                 usersList.add(
                                     isSelected[0]?DonorView(name: name,age: age,gender: genders[gender],
@@ -133,7 +133,7 @@ class _BoardPageState extends State<BoardPage> {
                               return Container(
                                 child: Center(
                                   child: Text(
-                                    '🙁 No Results Found',
+                                    '🙁 No Records Found',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20,
