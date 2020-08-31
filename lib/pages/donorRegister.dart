@@ -290,6 +290,46 @@ class _DonorRegisterState extends State<DonorRegister> {
             children: <Widget>[
               Flexible(
                 child: Container(
+                  child: Text('Recovered Date',style: kLabelStyle,),
+                ),
+              ),
+              Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Color(0xffef9a9a),
+                      borderRadius: BorderRadius.horizontal(left: Radius.circular(10)),
+                    ),
+                    child: Text(formatter.format(dates[1]),style: kDateStyle,),
+                  ),
+                  InkWell(
+                    onTap: () => _selectDate(1, context),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: Color(0xffffcdd2),
+                        borderRadius: BorderRadius.horizontal(right: Radius.circular(10)),
+                      ),
+                      child: Icon(
+                        FontAwesomeIcons.calendarAlt,
+                        color: Colors.black,
+                      ),
+                    ),
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
+
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Flexible(
+                child: Container(
                   child: Text('Last Tested',style: kLabelStyle,),
                 ),
               ),
@@ -325,6 +365,7 @@ class _DonorRegisterState extends State<DonorRegister> {
             ],
           ),
         ),
+
 
         Container(
           margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
@@ -619,70 +660,6 @@ class _DonorRegisterState extends State<DonorRegister> {
                         hintText: 'Ex: Mental Illness'
                     ),
                   ),
-                )
-              ],
-            ),
-          ),
-        ),
-        Container(
-            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05),
-            padding: EdgeInsets.only(right: MediaQuery.of(context).size.width*0.1),
-            child:Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Flexible(child: Text('Are you a recovered Patient',style: kLabelStyle,)),
-                Container(
-                  child: Switch(
-                    value: isCovid,
-                    inactiveThumbColor: Colors.white,
-                    activeColor: Color(0xffef9a9a),
-                    onChanged: (value){
-                      setState(() {
-                        isCovid = value;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            )
-        ),
-        Visibility(
-          visible: isCovid,
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05,vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Flexible(
-                  child: Container(
-                    child: Text('Recovered Date',style: kLabelStyle,),
-                  ),
-                ),
-                Row(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Color(0xffef9a9a),
-                        borderRadius: BorderRadius.horizontal(left: Radius.circular(10)),
-                      ),
-                      child: Text(formatter.format(dates[1]),style: kDateStyle,),
-                    ),
-                    InkWell(
-                      onTap: () => _selectDate(1, context),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-                        decoration: BoxDecoration(
-                          color: Color(0xffffcdd2),
-                          borderRadius: BorderRadius.horizontal(right: Radius.circular(10)),
-                        ),
-                        child: Icon(
-                          FontAwesomeIcons.calendarAlt,
-                          color: Colors.black,
-                        ),
-                      ),
-                    )
-                  ],
                 )
               ],
             ),
