@@ -30,18 +30,25 @@ class _UsersDisplayState extends State<UsersDisplay> {
   bool searchBar = false;
 
   List<Widget> screens = [RegisterPage(),BoardPage(searchedQuery: DataSearch.finalValue,),ProfilePage()];
-  List<String> headings = ['Forms','Board','Profile'];
+  List<String> headings = ['Forms','Board','Your History'];
   List<String> bloodGroups = ['A+','B+','AB+','O+','A-','B-','AB-','O-'];
   String selectedBloodGroup = 'A+';
   String selectedGender = 'M';
   List<String> gender = ['M','F','O'];
   bool isSearched = false;
+  bool isDisclaimer = false;
 
   Future<bool> onWillPop(){
     if(searchBar)
       {
         setState(() {
           searchBar = !searchBar;
+        });
+      }
+    else if(isDisclaimer)
+      {
+        setState(() {
+          isDisclaimer = false;
         });
       }
     else
@@ -59,11 +66,24 @@ class _UsersDisplayState extends State<UsersDisplay> {
     print(citiesGlobal);
   }
 
+  showDisclaimer(bool isOpen){
+    int sec = isOpen?3:7;
+    setState(() {
+      isDisclaimer = true;
+    });
+    Future.delayed(Duration(seconds: sec),(){
+      setState(() {
+        isDisclaimer = false;
+      });
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getData();
+    showDisclaimer(true);
   }
 
   @override
@@ -175,6 +195,7 @@ class _UsersDisplayState extends State<UsersDisplay> {
                                   color: Colors.white,
                                 ),
                                 child: DropdownButton(
+                                  isExpanded: true,
                                   style: TextStyle(
                                     color: Color(0xf0ff1744),
                                     fontSize: 18,
@@ -182,7 +203,6 @@ class _UsersDisplayState extends State<UsersDisplay> {
                                   ),
                                   icon: Icon(
                                     Icons.keyboard_arrow_down,
-                                    size: 20,
                                     color: Color(0xf0ff1744),
                                   ),
                                   underline: SizedBox(),
@@ -291,30 +311,46 @@ class _UsersDisplayState extends State<UsersDisplay> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.01),
-                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.01),
-                    child: Icon(
-                      Icons.info,
-                      color: Colors.red,
-                      size: 25,
+                  GestureDetector(
+                    onTap: (){
+                      if(isDisclaimer)
+                        {
+                          setState(() {
+                            isDisclaimer = false;
+                          });
+                        }
+                      else{
+                        showDisclaimer(false);
+                      }
+                    },
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.01),
+                      padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.01),
+                      child: Icon(
+                        Icons.info,
+                        color: Colors.red,
+                        size: 25,
+                      ),
                     ),
                   ),
-                  Flexible(
-                    child: Container(
-                      margin: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.025),
-                      width: MediaQuery.of(context).size.width*0.85,
-                      child: Bubble(
-                        padding: BubbleEdges.all(10),
-                        color: Colors.red,
-                        stick: true,
-                        nip: BubbleNip.leftTop,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text('Disclaimer :\n', style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
-                            Text(disclaimer,style: TextStyle(color: Colors.white, fontSize: 12,fontWeight: FontWeight.w500),)
-                          ],
+                  Visibility(
+                    visible: isDisclaimer,
+                    child: Flexible(
+                      child: Container(
+                        margin: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.025),
+                        width: MediaQuery.of(context).size.width*0.85,
+                        child: Bubble(
+                          padding: BubbleEdges.all(10),
+                          color: Colors.red,
+                          stick: true,
+                          nip: BubbleNip.leftTop,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text('Disclaimer :\n', style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                              Text(disclaimer,style: TextStyle(color: Colors.white, fontSize: 12,fontWeight: FontWeight.w500),)
+                            ],
+                          ),
                         ),
                       ),
                     ),

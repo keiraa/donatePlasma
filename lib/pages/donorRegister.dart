@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:plasmabank/backend/getJSONdata.dart';
 import 'package:plasmabank/pages/Inteface.dart';
 import 'package:plasmabank/pages/Register.dart';
+import 'package:plasmabank/pages/termsAndConditions.dart';
 import 'package:plasmabank/requisities/styles.dart';
 
 
@@ -34,7 +37,7 @@ class _DonorRegisterState extends State<DonorRegister> {
   String selectedBloodGroup = 'A+';
   String selectedTreatment = 'Home Quarantined';
   List<String> genders = ['M','F','O'];
-  bool isBP=false,isDiabetic=false,isCovid=false,isPreCondition= false;
+  bool isBP=false,isDiabetic=false,isCovid=false,isPreCondition= false, tAndC = false, acceptTandC = false;
   DateTime testDate = DateTime.now();
   DateTime recoverDate = DateTime.now();
 
@@ -686,24 +689,86 @@ class _DonorRegisterState extends State<DonorRegister> {
           ),
         ),
         SizedBox(height: MediaQuery.of(context).size.height*0.03,),
+        Container(
+            margin: EdgeInsets.only(left: MediaQuery.of(context).size.width*0.043,right: MediaQuery.of(context).size.width*0.08),
+            child: Column(
+              children: <Widget>[
+                Visibility(
+                  visible: acceptTandC,
+                  child: Container(
+                      margin: EdgeInsets.only(bottom: 2),
+                      child: Text('please accept the terms and conditions to proceed', style: TextStyle(color: Colors.red,),)
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      height:20,
+                      width: 20,
+                      child: Checkbox(
+                        value: tAndC,
+                        activeColor: Color(0xf0ff5252),
+                        materialTapTargetSize: MaterialTapTargetSize.padded,
+                        onChanged: (x){
+                          setState(() {
+                            tAndC = !tAndC;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 5,),
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                            style: TextStyle(color: Colors.black),
+                            children: [
+                              TextSpan(text: 'By creating an account you agree to our', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14)),
+                              TextSpan(
+                                  text: ' terms and conditions',
+                                  style: TextStyle(color: Color(0xf0ff5252),fontWeight: FontWeight.w600, fontSize: 16),
+                                  recognizer: TapGestureRecognizer()..onTap = (){
+                                    showDialog(context: context, builder: (context)=>TermsAndConditions());
+                                  }
+                              ),
+                            ]
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            )
+        ),
+        SizedBox(height: MediaQuery.of(context).size.height*0.03,),
         Center(
           child: GestureDetector(
             onTap: () async{
-              print(myJson.getCity());
-              print(myJson.getDistrict());
-              print(myJson.getDivision());
-              print(myJson.getRegion());
-              print(myJson.getState());
-              setState(() {
-                isSpinning = 20;
-              });
+              if(!tAndC){
+                setState(() {
+                  acceptTandC = true;
+                });
+              }
+              else{
+                setState(() {
+                  isSpinning = 20;
+                });
 
 
-              var result= await Firestore.instance.collection('indiancities').document('cities').get();
-              print( await result.data['places'].toList());
-              var cities=result.data['places'].toList();
+                var result= await Firestore.instance.collection('indiancities').document('cities').get();
+                print( await result.data['places'].toList());
+                var cities=result.data['places'].toList();
                 if(selectedBloodGroup==null||selectedTreatment==null||name==null|| age==null|| selectedGender==null||  city==null||state==null||pincode==null)
                 {
+                  Fluttertoast.showToast(
+                      msg: 'Please fill all details',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: Color(0xffe57373),
+                      textColor: Colors.white,
+                      fontSize: 18
+                  );
                 }
                 else {
                   try {
@@ -776,6 +841,7 @@ class _DonorRegisterState extends State<DonorRegister> {
                     print(e);
                   }
                 }
+              }
             },
             child: Card(
               elevation: 15,
