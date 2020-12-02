@@ -1,15 +1,18 @@
+//import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:plasmabank/requisities/styles.dart';
 
 
 
 class DonorView extends StatefulWidget {
-  DonorView({this.name,this.city,this.age,this.bloodGroup,this.gender,this.neededDate,this.contact,this.state,this.lastTested,this.treatment,this.pincode,this.bp,this.diabetes,this.preMedical,this.created,this.isRecovered,this.recoverDate});
-  final String name,age,gender,city,bloodGroup,neededDate,treatment,contact,state,pincode,preMedical;
-  final bool bp,diabetes,isRecovered;
+  DonorView({this.name,this.city,this.age,this.bloodGroup,this.gender,this.neededDate,this.contact,this.state,this.lastTested,this.treatment,this.pincode,this.bp,this.diabetes,this.preMedical,this.created,this.isRecovered,this.recoverDate,this.document,this.isdelete});
+  final String name,age,gender,city,bloodGroup,neededDate,treatment,contact,state,pincode,preMedical,document;
+  final bool bp,diabetes,isRecovered,isdelete;
   final Timestamp lastTested,created,recoverDate;
 
   @override
@@ -21,7 +24,18 @@ class _DonorViewState extends State<DonorView> {
   DateFormat formatter = DateFormat.yMd();
 
   IconData down = Icons.keyboard_arrow_down,up = Icons.keyboard_arrow_up;
-
+   delete(){
+     Firestore.instance.collection("donor").document(widget.document).delete();
+     Fluttertoast.showToast(
+         msg: "Deleted Successfully",
+         toastLength: Toast.LENGTH_SHORT,
+         gravity: ToastGravity.CENTER,
+         timeInSecForIosWeb: 5,
+         backgroundColor: Colors.white,
+         textColor: Colors.black,
+         fontSize: 16.0
+     );
+   }
   @override
   Widget build(BuildContext context) {
     DateTime recoverDate = widget.isRecovered?widget.recoverDate.toDate():DateTime.now();
@@ -220,6 +234,42 @@ class _DonorViewState extends State<DonorView> {
                                 child: Container(
                                     width: MediaQuery.of(context).size.width*0.35,
                                     child: Text('${widget.isRecovered?formatter.format(recoverDate):'Not Recovered'}',style: kDateStyle.copyWith(color: Colors.black),)
+                                ),
+                              )
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+
+                              SizedBox(width: MediaQuery.of(context).size.width*0.05,),
+                              Flexible(
+                                child: Visibility(
+                                  visible: widget.isdelete,
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                    await delete();
+                                    },
+                                    child: Container(
+
+                                        width: MediaQuery.of(context).size.width*0.35,
+                                        child: Card(
+                                          elevation: 15,
+                                          color: Color(0xf0ff5252),
+                                          child: Padding(
+                                            padding: EdgeInsets.all(15),
+                                            child: Center(
+                                              child: Text(
+                                                'Delete',
+                                                style: kGenderSelected.copyWith(
+                                                    fontSize: 15
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                    ),
+                                  ),
                                 ),
                               )
                             ],

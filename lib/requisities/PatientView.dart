@@ -1,15 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:plasmabank/requisities/styles.dart';
 
-
-
-
 class PatientView extends StatefulWidget {
-  PatientView({this.name,this.city,this.age,this.bloodGroup,this.gender,this.neededDate,this.contact,this.state,this.lastTested,this.hospital,this.relation,this.pincode,this.bp,this.diabetes,this.preMedical,this.created,this.extraDetails});
-  final String name,age,gender,city,bloodGroup,neededDate,relation,hospital,contact,state,pincode,preMedical,extraDetails;
-  final bool bp,diabetes;
+  PatientView({this.name,this.city,this.age,this.bloodGroup,this.gender,this.neededDate,this.contact,this.state,this.lastTested,this.hospital,this.relation,this.pincode,this.bp,this.diabetes,this.preMedical,this.created,this.extraDetails,this.document,this.isdelete});
+  final String name,age,gender,city,bloodGroup,neededDate,relation,hospital,contact,state,pincode,preMedical,extraDetails,document;
+  final bool bp,diabetes,isdelete;
   final Timestamp lastTested,created;
 
   @override
@@ -20,7 +18,18 @@ class _PatientViewState extends State<PatientView> {
   bool isPressed = false;
 
   IconData down = Icons.keyboard_arrow_down,up = Icons.keyboard_arrow_up;
-
+  delete(){
+    Firestore.instance.collection("patient").document(widget.document).delete();
+    Fluttertoast.showToast(
+        msg: "Deleted Successfully",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 5,
+        backgroundColor: Colors.white,
+        textColor: Colors.black,
+        fontSize: 16.0
+    );
+  }
   @override
   Widget build(BuildContext context) {
     DateTime lastTested = widget.lastTested.toDate();
@@ -242,6 +251,42 @@ class _PatientViewState extends State<PatientView> {
                               child: Container(
                                   width: MediaQuery.of(context).size.width*0.35,
                                   child: Text('${widget.extraDetails}',style: kDateStyle.copyWith(color: Colors.black),)
+                              ),
+                            )
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+
+                            SizedBox(width: MediaQuery.of(context).size.width*0.05,),
+                            Flexible(
+                              child: Visibility(
+                                visible: widget.isdelete,
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    await delete();
+                                  },
+                                  child: Container(
+
+                                      width: MediaQuery.of(context).size.width*0.35,
+                                      child: Card(
+                                        elevation: 15,
+                                        color: Color(0xf0ff5252),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(15),
+                                          child: Center(
+                                            child: Text(
+                                              'Delete',
+                                              style: kGenderSelected.copyWith(
+                                                  fontSize: 15
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                  ),
+                                ),
                               ),
                             )
                           ],

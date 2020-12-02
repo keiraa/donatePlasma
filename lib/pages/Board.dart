@@ -111,18 +111,19 @@ class _BoardPageState extends State<BoardPage> {
                             var created = data.data['created'];
                             var moreDetails = data.data['moredetails'];
                             var uid = data.data['uid'];
+                            var document=data.documentID;
                             if(_user.uid != uid)
                               {
                                 usersList.add(
                                     isSelected[0]?DonorView(name: name,age: age,gender: genders[gender],
                                   city: city,neededDate: '19/01/2000',bloodGroup: bloodGroup,treatment: treatment,contact: contact,
                                   lastTested: lastTested,state: state, pincode: pincode, bp: bp, diabetes:diabetes, created: created,
-                                  preMedical: preMedical, recoverDate: recoverdate, isRecovered: isRecovered,
+                                  preMedical: preMedical, recoverDate: recoverdate, isRecovered: isRecovered,document: document,isdelete: false,
                                 ):
                                         PatientView(
                                           name: name, age: age, bloodGroup: bloodGroup, gender: genders[gender], lastTested: lastTested,
                                           relation: relation, hospital: hospital, contact: contact, city: city, state: state, pincode: pincode,
-                                          bp: bp, diabetes: diabetes, preMedical: preMedical, extraDetails: moreDetails, neededDate: '19/05/2020',
+                                          bp: bp, diabetes: diabetes, preMedical: preMedical, extraDetails: moreDetails, neededDate: '19/05/2020',document: document,isdelete: false,
 
                                         )
                                 );
