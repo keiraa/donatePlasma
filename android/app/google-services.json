@@ -1,34 +1,33 @@
 {
   "project_info": {
-    "project_number": "71149220585",
-    "firebase_url": "https://donate-plasma-c06b9.firebaseio.com",
-    "project_id": "donate-plasma-c06b9",
-    "storage_bucket": "donate-plasma-c06b9.appspot.com"
+    "project_number": "705893656498",
+    "project_id": "plasma-bank-76f3a",
+    "storage_bucket": "plasma-bank-76f3a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:71149220585:android:72594d1fbed5a8e594f678",
+        "mobilesdk_app_id": "1:705893656498:android:095d0a7de6acdd7b5966ab",
         "android_client_info": {
           "package_name": "com.appovate.plasmabank"
         }
       },
       "oauth_client": [
         {
-          "client_id": "71149220585-volaho7iaeh2apunj99hr0kq5mglj8oo.apps.googleusercontent.com",
+          "client_id": "705893656498-86s0d8ruqulrf746h255kdhsms1235ua.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBlSstnqJvS1flNINGHnw-a3GA_6kvctCI"
+          "current_key": "AIzaSyBfAYcYMpiB99oxUu8-0ac3MLMkGhBNqxA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "71149220585-volaho7iaeh2apunj99hr0kq5mglj8oo.apps.googleusercontent.com",
+              "client_id": "705893656498-86s0d8ruqulrf746h255kdhsms1235ua.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
